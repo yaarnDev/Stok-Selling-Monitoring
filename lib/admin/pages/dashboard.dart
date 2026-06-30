@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-// Paket universal HTML bawaan Flutter untuk handle download file di browser PC
-import 'dart:html' as html; 
 import '../providers/admin_provider.dart';
 import 'stocks_editor.dart';
 import 'stores_manager.dart';
@@ -85,20 +83,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
       if (mounted) Navigator.pop(context); // Tutup Loading screen
 
-      // --- LOGIK DOWNLOAD OTOMATIS DI BROWSER ---
-      final blob = html.Blob([pngBytes], 'image/png');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute("download", "REKAP_${jenisReport}_${DateFormat('yyyyMMdd').format(DateTime.now())}.png")
-        ..click();
-      html.Url.revokeObjectUrl(url); // Bersihkan memory url cache
-
-      // Buka tab baru langsung ke WA Web
-      html.window.open('https://web.whatsapp.com/', '_blank');
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('📸 Gambar sukses ter-download! Silakan attach dari folder Downloads ke WhatsApp Web.'),
+          content: Text('📸 Gambar sukses ter-download!.'),
           backgroundColor: Colors.green,
           duration: Duration(seconds: 4),
         ),
