@@ -67,4 +67,10 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // 🛠️ JALUR AMAN: Selipan khusus penjinak bentrok duplikasi class Kotlin bawaan engine
+    modules {
+        module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") { replacedBy("org.jetbrains.kotlin:kotlin-stdlib") }
+        module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") { replacedBy("org.jetbrains.kotlin:kotlin-stdlib") }
+    }
+}
