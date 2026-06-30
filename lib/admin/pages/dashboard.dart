@@ -1,4 +1,3 @@
-
 import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -57,10 +56,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     for (var s in samples) {
       await db.collection('stocks').add(s);
     }
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sample stocks seeded')));
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sample stocks seeded')));
+    }
   }
 
-  // ==================== ENGINE DOWNLOAD GAMBAR + DIRECT WA WEB ====================
+  // ==================== ENGINE DOWNLOAD GAMBAR REKAP AMAN ====================
   Future<void> _generateAndShareReportImage({required String jenisReport}) async {
     setState(() {
       _jenisReportAktif = jenisReport;
@@ -73,19 +74,34 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Memberikan waktu tunggu jeda agar widget rekap selesai re-layout secara sempurna
+      await Future.delayed(const Duration(milliseconds: 600));
 
-      final RenderRepaintBoundary boundary = _boundaryKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      final boundaryContext = _boundaryKey.currentContext;
+      if (boundaryContext == null) {
+        throw 'Gagal mendeteksi area gambar rekap. Silakan coba lagi.';
+      }
+
+      final RenderRepaintBoundary boundary = boundaryContext.findRenderObject() as RenderRepaintBoundary;
       
+      // Proteksi Tambahan: Mencegah potret paksa jika engine widget sedang repainting
+      if (boundary.debugNeedsPaint) {
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+
       final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      final Uint8List pngBytes = byteData!.buffer.asUint8List();
+      
+      if (byteData == null) throw 'Gagal mengekstrak data gambar.';
+      final Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      if (mounted) Navigator.pop(context); // Tutup Loading screen
+      // Mencegah eror rilis dead-context memory leak
+      if (!mounted) return;
+      Navigator.pop(context); // Tutup Loading screen
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('📸 Gambar sukses ter-download!.'),
+          content: Text('📸 Gambar sukses ter-download! Silakan cek galeri atau folder unduhan untuk dibagikan.'),
           backgroundColor: Colors.green,
           duration: Duration(seconds: 4),
         ),
@@ -299,7 +315,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
 
-          // LAYOUT 2: WIDGET REKAP YANG DI-RENDER KHUSUS UNTUK DIPOTRET
+          // LAYOUT 2: WIDGET REKAP YANG DI-RENDER KHUSUS UNTUK DIPOTRET (Bebas dari dart:html)
           Transform.translate(
             offset: const Offset(-3000, -3000), 
             child: SingleChildScrollView(
@@ -359,7 +375,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             int totalKarton = 0;
 
                             if (_jenisReportAktif == 'HARIAN') {
-                              // KUNCI EMAS EDITAN: Hanya menyaring toko berstatus 'TERKIRIM' (Pending & OTW otomatis dibuang/0)
                               final tokoSalesTerkirim = prov.stores.where((store) {
                                 return store.sales.toUpperCase() == sales.toUpperCase() && 
                                        store.status.toUpperCase() == 'TERKIRIM' &&
@@ -373,7 +388,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                 }
                               }
                             } else {
-                              // Filter bulanan: Tetap mengonsumsi fungsi akumulasi bulanan murni (murni status terkirim)
                               totalKarton = prov.getSalesMonthlyAchieved(sales);
                             }
 
