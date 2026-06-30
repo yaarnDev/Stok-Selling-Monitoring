@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "81984795948",
+    "project_id": "stok-barang-labini",
+    "storage_bucket": "stok-barang-labini.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81984795948:android:96768e4c349cfc5e5a2889",
+        "android_client_info": {
+          "package_name": "com.example.stok_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDAuxU8oMCXmgsVDCu1RMWIhAzk3eNwPo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
