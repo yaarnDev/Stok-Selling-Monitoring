@@ -12,8 +12,8 @@ class AdminLoginPage extends StatefulWidget {
 }
 
 class _AdminLoginPageState extends State<AdminLoginPage> {
-  final _emailCtrl = TextEditingController(text: "labiniofficialsurabaya@gmail.com");
-  final _passCtrl = TextEditingController(text: "oyar021001");
+  final _emailCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
   bool _loading = false;
   String? _error;
 
@@ -111,20 +111,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2))
                     : const Text('Sign in (Firebase)'),
               ),
-            ),
-            // Anonymous and test login buttons removed
-            const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 16),
-            const Text(
-              'Test Credentials (for development):',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const Text(
-              'Email: labiniofficialsurabaya@gmail.com\nPassword: oyar021001',
-              style: TextStyle(fontSize: 10, color: Colors.grey),
-              textAlign: TextAlign.center,
             ),
           ],
         ),
