@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart'; // Tetap dipertahaman untuk jembatan save file universal
 import '../providers/admin_provider.dart';
 import 'stocks_editor.dart';
 import 'stores_manager.dart';
@@ -24,7 +25,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   // Kunci utama untuk menangkap area widget rekap agar bisa difoto jadi gambar
   final GlobalKey _boundaryKey = GlobalKey();
 
-  // Menandai jenis rekap yang sedang aktif (HARIAN / BULANAN)
+  // Menandai jenis rekap yang sedang aktif (HARIAN / MANIFEST_TRANSAKSI)
   String _jenisReportAktif = 'HARIAN';
 
   final List<String> listSales = ['SYAKUR', 'FAISOL', 'MULYADI', 'LUAY', 'INSTANSI', 'SHOPEE'];
@@ -45,6 +46,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     final db = FirebaseFirestore.instance;
     final snap = await db.collection('stocks').limit(1).get();
     if (snap.docs.isNotEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sample stocks already exist')));
       return;
     }
@@ -56,12 +58,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     for (var s in samples) {
       await db.collection('stocks').add(s);
     }
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sample stocks seeded')));
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sample stocks seeded')));
   }
 
-  // ==================== ENGINE DOWNLOAD GAMBAR REKAP AMAN ====================
+  // ==================== ENGINE DOWNLOAD REKAP LANGSUNG TO THE POINT ====================
   Future<void> _generateAndShareReportImage({required String jenisReport}) async {
     setState(() {
       _jenisReportAktif = jenisReport;
@@ -74,7 +75,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
 
     try {
-      // Memberikan waktu tunggu jeda agar widget rekap selesai re-layout secara sempurna
+      // Jeda waktu agar widget selesai merakit layout baru secara sempurna
       await Future.delayed(const Duration(milliseconds: 600));
 
       final boundaryContext = _boundaryKey.currentContext;
@@ -84,7 +85,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
       final RenderRepaintBoundary boundary = boundaryContext.findRenderObject() as RenderRepaintBoundary;
       
-      // Proteksi Tambahan: Mencegah potret paksa jika engine widget sedang repainting
       if (boundary.debugNeedsPaint) {
         await Future.delayed(const Duration(milliseconds: 300));
       }
@@ -95,19 +95,27 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       if (byteData == null) throw 'Gagal mengekstrak data gambar.';
       final Uint8List pngBytes = byteData.buffer.asUint8List();
 
-      // Mencegah eror rilis dead-context memory leak
       if (!mounted) return;
-      Navigator.pop(context); // Tutup Loading screen
+      Navigator.pop(context); // Tutup loading dialog
 
+      // Nama berkas rekap otomatis sesuai tanggal hari ini
+      final String namaFile = 'REKAP_${jenisReport}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.png';
+      
+      // Eksekusi murni simpan berkas ke folder unduhan lokal laptop (Chrome Downloads)
+      final xFile = XFile.fromData(pngBytes, name: namaFile, mimeType: 'image/png');
+      await xFile.saveTo(namaFile);
+
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('📸 Gambar sukses ter-download! Silakan cek galeri atau folder unduhan untuk dibagikan.'),
+        SnackBar(
+          content: Text('📥 Berhasil mendownload $namaFile! Silakan cek folder Downloads laptop abang.'),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 4),
         ),
       );
+
     } catch (e) {
-      if (mounted) Navigator.pop(context);
+      if (!mounted) return;
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Gagal membuat gambar rekap: $e'), backgroundColor: Colors.red),
       );
@@ -142,7 +150,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       body: Stack(
         children: [
           
-          // LAYOUT 1: HALAMAN DASHBOARD UTAMA
+          // LAYOUT 1: HALAMAN DASHBOARD UTAMA ADM
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -179,9 +187,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           foregroundColor: Colors.green.shade800,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
-                        onPressed: () => _generateAndShareReportImage(jenisReport: 'BULANAN'),
-                        icon: const Icon(Icons.cloud_download_rounded),
-                        label: const Text('Download Rekap Bulanan'),
+                        onPressed: () => _generateAndShareReportImage(jenisReport: 'MANIFEST_TRANSAKSI'),
+                        icon: const Icon(Icons.print_rounded),
+                        label: const Text('Cetak Rekap Transaksi Harian'),
                       ),
                     ),
                   ],
@@ -315,14 +323,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
 
-          // LAYOUT 2: WIDGET REKAP YANG DI-RENDER KHUSUS UNTUK DIPOTRET (Bebas dari dart:html)
+          // LAYOUT 2: WIDGET REKAP YANG DI-RENDER KHUSUS UNTUK DIPOTRET (Format Terkelompok Per-Sales Mulus)
           Transform.translate(
-            offset: const Offset(-3000, -3000), 
+            offset: Offset(_jenisReportAktif == 'HARIAN' ? -3000 : -5000, -3000), 
             child: SingleChildScrollView(
               child: RepaintBoundary(
                 key: _boundaryKey,
                 child: Container(
-                  width: 500,
+                  width: _jenisReportAktif == 'HARIAN' ? 500 : 750,
                   padding: const EdgeInsets.all(24),
                   color: Colors.white,
                   child: Column(
@@ -332,7 +340,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: _jenisReportAktif == 'HARIAN' ? Colors.blue.shade800 : Colors.green.shade800,
+                          color: _jenisReportAktif == 'HARIAN' ? Colors.blue.shade800 : Colors.teal.shade800,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -341,40 +349,38 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('REKAP PENJUALAN $_jenisReportAktif', style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                                Text(
+                                  _jenisReportAktif == 'HARIAN' ? 'REKAP PENJUALAN HARIAN' : 'MANIFEST LAPORAN TRANSAKSI HARIAN', 
+                                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 0.5)
+                                ),
                                 const SizedBox(height: 4),
-                                Text('Tanggal: ${DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now())} WIB', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                                Text('Tanggal Cetak: ${DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now())} WIB', style: const TextStyle(color: Colors.white70, fontSize: 11)),
                               ],
                             ),
-                            const Icon(Icons.summarize_rounded, color: Colors.white, size: 32),
+                            Icon(_jenisReportAktif == 'HARIAN' ? Icons.summarize_rounded : Icons.fact_check_rounded, color: Colors.white, size: 32),
                           ],
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Table(
-                        border: TableBorder.all(color: Colors.grey.shade300, width: 1, borderRadius: BorderRadius.circular(4)),
-                        columnWidths: const {
-                          0: FlexColumnWidth(2.5),
-                          1: FlexColumnWidth(2),
-                        },
-                        children: [
-                          TableRow(
-                            decoration: BoxDecoration(color: Colors.grey.shade100),
-                            children: const [
-                              Padding(
-                                padding: EdgeInsets.all(10), 
-                                child: Text('NAMA SALES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(10), 
-                                child: Text('TOTAL OMSET (KRT)', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))
-                              ),
-                            ],
-                          ),
-                          ...listSales.map((sales) {
-                            int totalKarton = 0;
-
-                            if (_jenisReportAktif == 'HARIAN') {
+                      
+                      // ==================== KONDISI A: TABEL OMSET PER SALES ====================
+                      if (_jenisReportAktif == 'HARIAN')
+                        Table(
+                          border: TableBorder.all(color: Colors.grey.shade300, width: 1, borderRadius: BorderRadius.circular(4)),
+                          columnWidths: const {
+                            0: FlexColumnWidth(2.5),
+                            1: FlexColumnWidth(2),
+                          },
+                          children: [
+                            TableRow(
+                              decoration: BoxDecoration(color: Colors.grey.shade100),
+                              children: const [
+                                Padding(padding: EdgeInsets.all(10), child: Text('NAMA SALES', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+                                Padding(padding: EdgeInsets.all(10), child: Text('TOTAL OMSET (KRT)', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
+                              ],
+                            ),
+                            ...listSales.map((sales) {
+                              int totalKarton = 0;
                               final tokoSalesTerkirim = prov.stores.where((store) {
                                 return store.sales.toUpperCase() == sales.toUpperCase() && 
                                        store.status.toUpperCase() == 'TERKIRIM' &&
@@ -387,34 +393,155 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                   totalKarton += qty;
                                 }
                               }
-                            } else {
-                              totalKarton = prov.getSalesMonthlyAchieved(sales);
-                            }
 
-                            return TableRow(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(12), 
-                                  child: Text(sales, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87))
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12), 
+                              return TableRow(
+                                children: [
+                                  Padding(padding: const EdgeInsets.all(12), child: Text(sales, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87))),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12), 
+                                    child: Text('$totalKarton', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blue.shade900)),
+                                  ),
+                                ],
+                              );
+                            }),
+                          ],
+                        ),
+
+                      // ==================== KONDISI B: 🛠️ TABEL MANIFEST DIKELOMPOKKAN PER SALES ====================
+                      if (_jenisReportAktif != 'HARIAN')
+                        Builder(
+                          builder: (context) {
+                            // Cek total seluruh toko yang bermuatan hari ini
+                            final globalActiveStores = prov.stores.where((s) => s.muatan.isNotEmpty).toList();
+
+                            if (globalActiveStores.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: Center(
                                   child: Text(
-                                    '$totalKarton', 
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold, 
-                                      fontSize: 14, 
-                                      color: _jenisReportAktif == 'HARIAN' ? Colors.blue.shade900 : Colors.green.shade900, 
-                                    ),
+                                    'Tidak ada rute pengiriman / muatan barang aktif hari ini.',
+                                    style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13),
                                   ),
                                 ),
-                              ],
+                              );
+                            }
+
+                            // Loop per nama sales untuk dibuatkan tabel mandiri masing-masing
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: listSales.map((namaSales) {
+                                // Filter toko aktif milik sales bersangkutan
+                                final tokoMilikSales = globalActiveStores.where(
+                                  (s) => s.sales.toUpperCase() == namaSales.toUpperCase()
+                                ).toList();
+
+                                // Jika sales ini tidak ada pengiriman aktif hari ini, lewati (tidak dirender)
+                                if (tokoMilikSales.isEmpty) return const SizedBox.shrink();
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 20.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Header Nama Sales Pengelompok
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.teal.shade50,
+                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(6), topRight: Radius.circular(6)),
+                                          border: Border.all(color: Colors.teal.shade200),
+                                        ),
+                                        child: Text(
+                                          'SALES JALAN: $namaSales',
+                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal.shade900, letterSpacing: 0.5),
+                                        ),
+                                      ),
+                                      // Tabel Manifest Khusus Sales Ini
+                                      Table(
+                                        border: TableBorder.all(color: Colors.grey.shade300, width: 1),
+                                        columnWidths: const {
+                                          0: FlexColumnWidth(3),   // Nama Toko / Resi
+                                          1: FlexColumnWidth(4.5), // Detail Muatan Barang
+                                          2: FlexColumnWidth(1.8), // Status Transaksi
+                                        },
+                                        children: [
+                                          TableRow(
+                                            decoration: BoxDecoration(color: Colors.grey.shade100),
+                                            children: const [
+                                              Padding(padding: EdgeInsets.all(8), child: Text('NAMA TOKO / DATA RESI', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.black87))),
+                                              Padding(padding: EdgeInsets.all(8), child: Text('DETAIL BARANG DIMUAT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.black87))),
+                                              Padding(padding: EdgeInsets.all(8), child: Text('STATUS', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.black87))),
+                                            ],
+                                          ),
+                                          ...tokoMilikSales.map((store) {
+                                            String detailBarang = store.muatan.map((m) => "${m['qty']} ${m['unit']} ${m['name']}").join(", ");
+                                            
+                                            // 🛠️ LOGIKA WARNA KEMBAR: OTW & PROSES SAMA-SAMA AMBER/ORANGE
+                                            Color badgeColor = Colors.amber.shade50;
+                                            Color textColor = Colors.amber.shade900;
+                                            String currentStatus = store.status.toUpperCase();
+
+                                            if (currentStatus == 'TERKIRIM') {
+                                              badgeColor = Colors.green.shade50;
+                                              textColor = Colors.green.shade800;
+                                            } else if (currentStatus == 'CANCEL') {
+                                              badgeColor = ui.Color.fromARGB(255, 248, 182, 192);
+                                              textColor = Colors.red.shade800;
+                                            } else if (currentStatus == 'PROSES') {
+                                              badgeColor = ui.Color.fromARGB(255, 167, 205, 234);
+                                              textColor = Colors.blue.shade800;
+                                            } else if (currentStatus == 'PENDING') {
+                                              badgeColor = Colors.amber.shade50;
+                                              textColor = Colors.amber.shade900;
+                                            }
+
+                                            return TableRow(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8), 
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(store.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.black87)),
+                                                      if (store.address.isNotEmpty && store.sales == 'SHOPEE')
+                                                        Text(store.address, style: TextStyle(fontSize: 9, color: Colors.orange.shade900, fontWeight: FontWeight.w500)),
+                                                    ],
+                                                  )
+                                                ),
+                                                Padding(padding: const EdgeInsets.all(8), child: Text(detailBarang, style: const TextStyle(fontSize: 11, color: Colors.black87))),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(8), 
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: badgeColor,
+                                                      borderRadius: BorderRadius.circular(4)
+                                                    ),
+                                                    child: Text(
+                                                      currentStatus, 
+                                                      textAlign: TextAlign.center, 
+                                                      style: TextStyle(
+                                                        fontSize: 9, 
+                                                        fontWeight: FontWeight.bold, 
+                                                        color: textColor
+                                                      )
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             );
-                          }),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
+                          },
+                        ),
+
+                      const SizedBox(height: 16),
                       Container(
                         alignment: Alignment.center,
                         child: Text(

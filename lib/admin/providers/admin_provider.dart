@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // Import Wajib Firebase Storage
 import 'package:flutter/material.dart';
 
 class Stock {
@@ -70,8 +72,9 @@ class SalesHistory {
   final String sales;
   final List<dynamic> muatan;
   final DateTime timestamp;
+  final String storeName;
 
-  SalesHistory({required this.sales, required this.muatan, required this.timestamp});
+  SalesHistory({required this.sales, required this.muatan, required this.timestamp, required this.storeName});
 
   factory SalesHistory.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
@@ -79,18 +82,19 @@ class SalesHistory {
       sales: data['sales']?.toString() ?? '',
       muatan: data['muatan'] is List ? data['muatan'] as List : [],
       timestamp: (data['timestamp'] is Timestamp) ? (data['timestamp'] as Timestamp).toDate() : DateTime.now(),
+      storeName: data['storeName']?.toString() ?? 'Toko Terhapus (Reset Harian)',
     );
   }
 }
 
 class AdminProvider extends ChangeNotifier {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance; 
 
   final List<Stock> _stocks = [];
   final List<Store> _stores = [];
   final List<SalesHistory> _history = [];
 
-  // PISAHKAN DUA KUNCI BARU:
   DateTime? _waktuResetHarianTerakhir;
   DateTime? _waktuResetBulananTerakhir;
 
@@ -109,6 +113,29 @@ class AdminProvider extends ChangeNotifier {
 
   List<Stock> get stocks => List.unmodifiable(_stocks);
   List<Store> get stores => List.unmodifiable(_stores);
+  List<SalesHistory> get history => List.unmodifiable(_history);
+
+  Stream<DocumentSnapshot> streamSalesProfile(String salesName) {
+    return _db.collection('sales_profiles').doc(salesName.trim().toUpperCase()).snapshots();
+  }
+
+  Future<void> uploadAndUpdateSalesAvatar(String salesName, File imageFile) async {
+    final String cleanName = salesName.trim().toUpperCase();
+    
+    // Pastikan Firebase Storage sudah diconfigure di Firebase Console Anda
+    final Reference ref = _storage.ref().child('sales_avatars').child('$cleanName.jpg');
+    final UploadTask uploadTask = ref.putFile(imageFile);
+    final TaskSnapshot snapshot = await uploadTask;
+    
+    final String downloadUrl = await snapshot.ref.getDownloadURL();
+    
+    await _db.collection('sales_profiles').doc(cleanName).set({
+      'avatarUrl': downloadUrl,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+    
+    notifyListeners();
+  }
 
   Stream<List<Store>> streamStoresBySales(String salesName) {
     return _db.collection('stores').snapshots().map((snap) {
@@ -154,7 +181,6 @@ class AdminProvider extends ChangeNotifier {
     final sekarang = DateTime.now();
     final awalBulan = DateTime(sekarang.year, sekarang.month, 1);
 
-    // Ambil info penanda filter reset harian & bulanan dari Firebase secara real-time
     _db.collection('system_config').doc('sales_period').snapshots().listen((configSnap) {
       if (configSnap.exists) {
         final configData = configSnap.data() ?? {};
@@ -226,7 +252,6 @@ class AdminProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // === FIX LOGIKA 1: RESET HARIAN (HANYA MERISET DATA HARI INI KE CARD BAWAH) ===
   Future<void> resetHarianSemuaToko() async {
     final snapshot = await _db.collection('stores').get();
     if (snapshot.docs.isEmpty) return;
@@ -262,7 +287,6 @@ class AdminProvider extends ChangeNotifier {
       }
     }
 
-    // Catat tanggal harian terakhir ke config Firebase
     batch.set(
       _db.collection('system_config').doc('sales_period'),
       {'last_reset_daily': Timestamp.now()},
@@ -274,7 +298,6 @@ class AdminProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // === FIX LOGIKA 2: RESET BULANAN (MURNI UNTUK CAPAIAN TARGET UTAMA ATAS) ===
   Future<void> resetBulananSemuaPenjualan() async {
     try {
       final batch = _db.batch();
@@ -283,7 +306,7 @@ class AdminProvider extends ChangeNotifier {
         _db.collection('system_config').doc('sales_period'),
         {
           'last_reset_monthly': Timestamp.now(),
-          'last_reset_daily': Timestamp.now(), // Saat reset bulanan, otomatis harian juga bersih
+          'last_reset_daily': Timestamp.now(),
         },
         SetOptions(merge: true),
       );
@@ -338,17 +361,14 @@ class AdminProvider extends ChangeNotifier {
     }
   }
 
-  // === FIX LOGIKA 3: RUMUS HITUNG BULANAN (TIDAK AKAN IKUT TERPOTONG RESET HARIAN) ===
   int getSalesMonthlyAchieved(String salesName) {
     int totalTerjual = 0;
     final sekarang = DateTime.now();
 
-    // 1. Ambil data akumulasi dari backup history penjualan bulanan
     for (var record in _history) {
       if (record.sales.trim().toUpperCase() == salesName.trim().toUpperCase()) {
         if (record.timestamp.month == sekarang.month && record.timestamp.year == sekarang.year) {
           
-          // KUNCI AMAN: History hanya dibuang kalau dia dibuat SEBELUM tombol reset bulanan ditekan
           if (_waktuResetBulananTerakhir != null && record.timestamp.isBefore(_waktuResetBulananTerakhir!)) {
             continue;
           }
@@ -361,12 +381,10 @@ class AdminProvider extends ChangeNotifier {
       }
     }
     
-    // 2. Tambahkan data toko aktif hari ini yang statusnya TERKIRIM
     for (var store in _stores) {
       if (store.sales.trim().toUpperCase() == salesName.trim().toUpperCase() &&
           store.status.toUpperCase() == 'TERKIRIM') {
         
-        // KUNCI AMAN: Toko hari ini juga hanya dibuang kalau dia dibuat sebelum tombol bulanan ditekan
         if (_waktuResetBulananTerakhir != null && store.createdAt != null && store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
           continue;
         }
