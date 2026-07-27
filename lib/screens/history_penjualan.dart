@@ -192,7 +192,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
     final String namaFile = 'REKAP_HISTORY_${_selectedSalesFilter}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.pdf';
 
-    // Langsung trigger preview & download/print PDF universal
+    // Trigger preview & download/print PDF universal
     await Printing.sharePdf(
       bytes: await pdf.save(),
       filename: namaFile,
@@ -350,6 +350,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       },
     );
   }
+
   // ==================== DIALOG CETAK PDF WITH ADMIN AUTH ====================
   void _showPrintPdfDialog(BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
     if (currentFilteredList.isEmpty) {
@@ -650,6 +651,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Filter Pencarian & Dropdown
             Row(
               children: [
                 Expanded(
@@ -729,16 +731,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             ),
             const SizedBox(height: 12),
 
+            // BARIS CONTROL FITUR: RESPONSIF MOBILE (ANTI OVERFLOW)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFE2E8F0)),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
+                  // Baris 1: Checkbox Centang Semua
                   InkWell(
                     onTap: () {
                       setState(() {
@@ -755,51 +758,66 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                     },
                     child: Row(
                       children: [
-                        Checkbox(
-                          value: isAllCurrentSelected,
-                          activeColor: Colors.red,
-                          onChanged: (val) {
-                            setState(() {
-                              if (val == true) {
-                                for (var item in filteredList) {
-                                  _selectedDeleteItemKeys.add(_getItemUniqueKey(item));
+                        SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: Checkbox(
+                            value: isAllCurrentSelected,
+                            activeColor: Colors.red,
+                            onChanged: (val) {
+                              setState(() {
+                                if (val == true) {
+                                  for (var item in filteredList) {
+                                    _selectedDeleteItemKeys.add(_getItemUniqueKey(item));
+                                  }
+                                } else {
+                                  for (var item in filteredList) {
+                                    _selectedDeleteItemKeys.remove(_getItemUniqueKey(item));
+                                  }
                                 }
-                              } else {
-                                for (var item in filteredList) {
-                                  _selectedDeleteItemKeys.remove(_getItemUniqueKey(item));
-                                }
-                              }
-                            });
-                          },
+                              });
+                            },
+                          ),
                         ),
-                        const Text('Centang Semua (Hapus)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF334155))),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Centang Semua (Hapus)',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                        ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 8),
                   
+                  // Baris 2: Tombol Cetak PDF & Hapus (Bagi 2 Rata Kanan Kiri)
                   Row(
                     children: [
-                      // TOMBOL CETAK PDF
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            elevation: 0,
+                          ),
+                          onPressed: () => _showPrintPdfDialog(context, filteredList),
+                          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16, color: Colors.white),
+                          label: const Text('Cetak PDF', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
-                        onPressed: () => _showPrintPdfDialog(context, filteredList),
-                        icon: const Icon(Icons.picture_as_pdf_rounded, size: 16, color: Colors.white),
-                        label: const Text('Cetak PDF', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
                       ),
                       const SizedBox(width: 8),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            elevation: 0,
+                          ),
+                          onPressed: () => _showDeleteHistoryDialog(context, filteredList),
+                          icon: const Icon(Icons.delete_sweep_rounded, size: 16, color: Colors.white),
+                          label: const Text('Hapus', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
                         ),
-                        onPressed: () => _showDeleteHistoryDialog(context, filteredList),
-                        icon: const Icon(Icons.delete_sweep_rounded, size: 16, color: Colors.white),
-                        label: const Text('Hapus', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
                       ),
                     ],
                   ),
