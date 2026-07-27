@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'dart:convert'; // Wajib untuk base64
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // Import Wajib untuk kIsWeb / Uint8List
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // Import Wajib Firebase Storage
 import 'package:flutter/material.dart';
 
 class Stock {
@@ -69,16 +70,24 @@ class Store {
 }
 
 class SalesHistory {
+  final String id; // <-- TAMBAHKAN ID DOKUMEN FIRESTORE
   final String sales;
   final List<dynamic> muatan;
   final DateTime timestamp;
   final String storeName;
 
-  SalesHistory({required this.sales, required this.muatan, required this.timestamp, required this.storeName});
+  SalesHistory({
+    required this.id, 
+    required this.sales, 
+    required this.muatan, 
+    required this.timestamp, 
+    required this.storeName
+  });
 
   factory SalesHistory.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
     return SalesHistory(
+      id: doc.id, // <-- SIMPAN ID DOKUMEN FIRESTORE
       sales: data['sales']?.toString() ?? '',
       muatan: data['muatan'] is List ? data['muatan'] as List : [],
       timestamp: (data['timestamp'] is Timestamp) ? (data['timestamp'] as Timestamp).toDate() : DateTime.now(),
@@ -89,8 +98,6 @@ class SalesHistory {
 
 class AdminProvider extends ChangeNotifier {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance; 
-
   final List<Stock> _stocks = [];
   final List<Store> _stores = [];
   final List<SalesHistory> _history = [];
@@ -119,22 +126,29 @@ class AdminProvider extends ChangeNotifier {
     return _db.collection('sales_profiles').doc(salesName.trim().toUpperCase()).snapshots();
   }
 
-  Future<void> uploadAndUpdateSalesAvatar(String salesName, File imageFile) async {
+  // JALUR TOTAL GRATIS: Mengubah gambar menjadi teks murni agar tersimpan aman di Firestore tanpa CORS error
+  Future<void> uploadAndUpdateSalesAvatarCrossPlatform(String salesName, dynamic xFile, Uint8List imageBytes) async {
     final String cleanName = salesName.trim().toUpperCase();
     
-    // Pastikan Firebase Storage sudah diconfigure di Firebase Console Anda
-    final Reference ref = _storage.ref().child('sales_avatars').child('$cleanName.jpg');
-    final UploadTask uploadTask = ref.putFile(imageFile);
-    final TaskSnapshot snapshot = await uploadTask;
-    
-    final String downloadUrl = await snapshot.ref.getDownloadURL();
-    
-    await _db.collection('sales_profiles').doc(cleanName).set({
-      'avatarUrl': downloadUrl,
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-    
-    notifyListeners();
+    try {
+      // Mengubah gambar menjadi string teks Base64
+      final String base64String = base64Encode(imageBytes);
+
+      // Simpan langsung teks gambar ini ke Cloud Firestore yang gratis
+      await _db.collection('sales_profiles').doc(cleanName).set({
+        'avatarBase64': base64String,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> uploadAndUpdateSalesAvatar(String salesName, File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    await uploadAndUpdateSalesAvatarCrossPlatform(salesName, null, bytes);
   }
 
   Stream<List<Store>> streamStoresBySales(String salesName) {

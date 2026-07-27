@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../providers/admin_provider.dart';
 
 class StockTile extends StatelessWidget {
@@ -62,7 +63,31 @@ class StockTile extends StatelessWidget {
               );
 
               if (result != null) {
+                // 1. Update Kuantitas Stok via Provider bawaan abang
                 provider.updateStockQuantity(stock.id, result);
+
+                // 2. SAKTI: Kirim TIMESTAMP SERVER ke Firestore biar Dashboard langsung nge-detect jamnya!
+                try {
+                  FirebaseFirestore.instance
+                      .collection('stocks')
+                      .doc(stock.id)
+                      .update({
+                    'updatedAt': FieldValue.serverTimestamp(),
+                  });
+                } catch (e) {
+                  // Fallback jika ID berbentuk khusus
+                  try {
+                    FirebaseFirestore.instance
+                        .collection('stocks')
+                        .where('name', isEqualTo: stock.name)
+                        .get()
+                        .then((snap) {
+                      for (var doc in snap.docs) {
+                        doc.reference.update({'updatedAt': FieldValue.serverTimestamp()});
+                      }
+                    });
+                  } catch (_) {}
+                }
               }
             },
             child: const Text('Edit'),
