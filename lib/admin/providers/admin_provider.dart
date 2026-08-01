@@ -110,6 +110,8 @@ class AdminProvider extends ChangeNotifier {
     'FAISOL': 5000,
     'MULYADI': 5000,
     'LUAY': 5000,
+    'INSTANSI': 10000,
+    'SHOPEE': 10000,
   };
 
   StreamSubscription<QuerySnapshot>? _stocksSub;
@@ -192,9 +194,6 @@ class AdminProvider extends ChangeNotifier {
   }
 
   void _listenToSalesHistory() {
-    final sekarang = DateTime.now();
-    final awalBulan = DateTime(sekarang.year, sekarang.month, 1);
-
     _db.collection('system_config').doc('sales_period').snapshots().listen((configSnap) {
       if (configSnap.exists) {
         final configData = configSnap.data() ?? {};
@@ -206,12 +205,15 @@ class AdminProvider extends ChangeNotifier {
         }
       }
 
-      _db.collection('history_penjualan')
-          .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(awalBulan))
-          .snapshots().listen((snap) {
+      // TARIK SEMUA TANPA FILTER TANGGAL MAUPUN WHERE
+      _db.collection('history_penjualan').snapshots().listen((snap) {
         _history
           ..clear()
           ..addAll(snap.docs.map((d) => SalesHistory.fromDoc(d)));
+        
+        // Urutkan manual lewat Dart biar ga perlu Firestore Index
+        _history.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+        
         notifyListeners();
       });
     });
@@ -379,9 +381,18 @@ class AdminProvider extends ChangeNotifier {
     int totalTerjual = 0;
     final sekarang = DateTime.now();
 
+    // Hitung awal periode berjalan berdasarkan siklus tanggal 25
+    DateTime awalPeriode;
+    if (sekarang.day >= 25) {
+      awalPeriode = DateTime(sekarang.year, sekarang.month, 25);
+    } else {
+      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 25);
+    }
+
+    // 1. Hitung dari Koleksi history_penjualan
     for (var record in _history) {
       if (record.sales.trim().toUpperCase() == salesName.trim().toUpperCase()) {
-        if (record.timestamp.month == sekarang.month && record.timestamp.year == sekarang.year) {
+        if (record.timestamp.isAfter(awalPeriode) || record.timestamp.isAtSameMomentAs(awalPeriode)) {
           
           if (_waktuResetBulananTerakhir != null && record.timestamp.isBefore(_waktuResetBulananTerakhir!)) {
             continue;
@@ -395,17 +406,22 @@ class AdminProvider extends ChangeNotifier {
       }
     }
     
+    // 2. Hitung dari Toko Aktif Berstatus TERKIRIM
     for (var store in _stores) {
       if (store.sales.trim().toUpperCase() == salesName.trim().toUpperCase() &&
           store.status.toUpperCase() == 'TERKIRIM') {
         
-        if (_waktuResetBulananTerakhir != null && store.createdAt != null && store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
-          continue;
-        }
+        DateTime waktuToko = store.createdAt ?? sekarang;
 
-        for (var item in store.muatan) {
-          final int qty = (item['qty'] is int) ? item['qty'] as int : int.tryParse('${item['qty']}') ?? 0;
-          totalTerjual += qty;
+        if (waktuToko.isAfter(awalPeriode) || waktuToko.isAtSameMomentAs(awalPeriode)) {
+          if (_waktuResetBulananTerakhir != null && store.createdAt != null && store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
+            continue;
+          }
+
+          for (var item in store.muatan) {
+            final int qty = (item['qty'] is int) ? item['qty'] as int : int.tryParse('${item['qty']}') ?? 0;
+            totalTerjual += qty;
+          }
         }
       }
     }

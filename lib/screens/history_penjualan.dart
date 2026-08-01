@@ -582,10 +582,19 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     final provider = Provider.of<AdminProvider>(context);
     final sekarang = DateTime.now();
     
+    // ==================== SISIPAN HITUNG PERIODE DARI TANGGAL 25 ====================
+    DateTime awalPeriode;
+    if (sekarang.day >= 25) {
+      awalPeriode = DateTime(sekarang.year, sekarang.month, 25);
+    } else {
+      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 25);
+    }
+    // =================================================================================
+
     List<Map<String, dynamic>> gabunganHistory = [];
 
     for (var record in provider.history) {
-      if (record.timestamp.month == sekarang.month && record.timestamp.year == sekarang.year) {
+      if (record.timestamp.isAfter(awalPeriode) || record.timestamp.isAtSameMomentAs(awalPeriode)) {
         gabunganHistory.add({
           'docId': record.id,
           'source': 'history_penjualan',
@@ -601,7 +610,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     for (var store in provider.stores) {
       if (store.status.toUpperCase() == 'TERKIRIM') {
         DateTime waktuToko = store.createdAt ?? sekarang;
-        if (waktuToko.month == sekarang.month && waktuToko.year == sekarang.year) {
+        if (waktuToko.isAfter(awalPeriode) || waktuToko.isAtSameMomentAs(awalPeriode)) {
           gabunganHistory.add({
             'docId': store.id,
             'source': 'stores',
