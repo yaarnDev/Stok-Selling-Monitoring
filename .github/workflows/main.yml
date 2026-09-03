@@ -54,13 +54,16 @@ jobs:
           flutter-version: '3.19.6'
           channel: 'stable'
 
-      - name: Enable Windows Desktop & Pub Get
+      # FIX UTAMA: Paksa regenerate folder windows di runner GitHub
+      - name: Reset & Regenerate Windows Platform
         run: |
+          if (Test-Path -Path "windows") { Remove-Item -Recurse -Force windows }
           flutter config --enable-windows-desktop
+          flutter create . --project-name daily_sale_stok_monitoring
           flutter pub get
 
       - name: Rakit File Executable Windows
-        run: flutter build windows --release -- -- -G "Visual Studio 17 2022"
+        run: flutter build windows --release
 
       - name: Zip Folder Release
         shell: pwsh
