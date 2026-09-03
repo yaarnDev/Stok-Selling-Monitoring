@@ -40,11 +40,46 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   Future<void> _generateAndDownloadPdf(List<Map<String, dynamic>> dataList) async {
     final pdf = pw.Document();
 
-    // Mengelompokkan data berdasarkan Sales jika filter "SEMUA"
+    // 1. Mengelompokkan data berdasarkan Sales jika filter "SEMUA"
     Map<String, List<Map<String, dynamic>>> groupedData = {};
     for (var item in dataList) {
       String salesName = item['sales'].toString().toUpperCase();
       groupedData.putIfAbsent(salesName, () => []).add(item);
+    }
+
+    // 2. LOGIKA HITUNG OTOMATIS TOTAL PER VARIAN & TOTAL KESELURUHAN
+    Map<String, Map<String, int>> variantTotals = {};
+    Map<String, int> grandTotalsByUnit = {}; // Menyimpan total keseluruhan per satuan (misal: Krt, Galon, Pcs)
+    int absoluteTotalQty = 0; // Total angka akumulasi murni
+
+    for (var item in dataList) {
+      final List<dynamic> muatan = item['muatan'] ?? [];
+      for (var m in muatan) {
+        String prodName = (m['name'] ?? 'Lainnya').toString().trim();
+        String unit = (m['unit'] ?? 'Krt').toString().trim();
+        int qty = 0;
+        if (m['qty'] is int) {
+          qty = m['qty'] as int;
+        } else {
+          qty = int.tryParse('${m['qty']}') ?? 0;
+        }
+
+        // Hitung per varian
+        if (!variantTotals.containsKey(prodName)) {
+          variantTotals[prodName] = {};
+        }
+        variantTotals[prodName]![unit] = (variantTotals[prodName]![unit] ?? 0) + qty;
+
+        // Hitung total gabungan keseluruhan
+        grandTotalsByUnit[unit] = (grandTotalsByUnit[unit] ?? 0) + qty;
+        absoluteTotalQty += qty;
+      }
+    }
+
+    // Merangkai teks total gabungan (contoh: "1.250 Krt + 150 Galon (Total 1.400 Barang)")
+    String grandTotalText = grandTotalsByUnit.entries.map((e) => "${e.value} ${e.key}").join(" + ");
+    if (grandTotalsByUnit.length > 1) {
+      grandTotalText += " (Total: $absoluteTotalQty Barang/Karton)";
     }
 
     pdf.addPage(
@@ -101,11 +136,110 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
         build: (pw.Context context) {
           List<pw.Widget> widgets = [];
 
+          // ================= REKAP TOTAL TIAP VARIAN & TOTAL KESELURUHAN =================
+          if (variantTotals.isNotEmpty) {
+            widgets.add(
+              pw.Container(
+                margin: const pw.EdgeInsets.only(bottom: 12),
+                padding: const pw.EdgeInsets.all(10),
+                decoration: pw.BoxDecoration(
+                  color: PdfColors.grey100,
+                  borderRadius: pw.BorderRadius.circular(4),
+                  border: pw.Border.all(color: PdfColors.teal700, width: 0.8),
+                ),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    // BANNER MOTIVASI TOTAL KESELURUHAN DI BULAN INI
+                    pw.Container(
+                      width: double.infinity,
+                      padding: const pw.EdgeInsets.all(8),
+                      margin: const pw.EdgeInsets.only(bottom: 8),
+                      decoration: pw.BoxDecoration(
+                        color: PdfColors.teal900,
+                        borderRadius: pw.BorderRadius.circular(3),
+                      ),
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.RichText(
+                            text: pw.TextSpan(
+                              children: [
+                                pw.TextSpan(
+                                  text: 'Total penjualan anda di bulan ini mencapai: ',
+                                  style: pw.TextStyle(fontSize: 9.5, color: PdfColors.white),
+                                ),
+                                pw.TextSpan(
+                                  text: grandTotalText,
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: PdfColors.amber300,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          pw.SizedBox(height: 3),
+                          pw.Text(
+                            'Ayo tingkatkan lagi penjualanmu di bulan depan!',
+                            style: pw.TextStyle(
+                              fontSize: 8.5,
+                              fontStyle: pw.FontStyle.italic,
+                              color: PdfColors.grey200,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    pw.Text(
+                      'RINCIAN TOTAL PER VARIAN:',
+                      style: pw.TextStyle(fontSize: 8.5, fontWeight: pw.FontWeight.bold, color: PdfColors.teal900),
+                    ),
+                    pw.SizedBox(height: 5),
+                    pw.Wrap(
+                      spacing: 6,
+                      runSpacing: 5,
+                      children: variantTotals.entries.map((entry) {
+                        String name = entry.key;
+                        String unitsSummary = entry.value.entries.map((e) => "${e.value} ${e.key}").join(" + ");
+                        return pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          decoration: pw.BoxDecoration(
+                            color: PdfColors.white,
+                            borderRadius: pw.BorderRadius.circular(3),
+                            border: pw.Border.all(color: PdfColors.teal300, width: 0.5),
+                          ),
+                          child: pw.RichText(
+                            text: pw.TextSpan(
+                              children: [
+                                pw.TextSpan(
+                                  text: '$name: ',
+                                  style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.black),
+                                ),
+                                pw.TextSpan(
+                                  text: unitsSummary,
+                                  style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.teal800),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // ================= TABEL DATA PER SALES =================
           groupedData.forEach((salesName, items) {
             // Header Nama Sales
             widgets.add(
               pw.Container(
-                margin: const pw.EdgeInsets.only(top: 10, bottom: 6),
+                margin: const pw.EdgeInsets.only(top: 8, bottom: 6),
                 padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.teal50,

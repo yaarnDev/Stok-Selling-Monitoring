@@ -132,6 +132,7 @@ class _StoresManagerPageState extends State<StoresManagerPage> {
                               decoration: const InputDecoration(labelText: 'Status Awal Orderan', border: OutlineInputBorder()),
                               items: const [
                                 DropdownMenuItem(value: 'OTW', child: Text('OTW')),
+                                DropdownMenuItem(value: 'RAID 2', child: Text('RAID 2')),
                                 DropdownMenuItem(value: 'PROSES', child: Text('PROSES')),
                                 DropdownMenuItem(value: 'TERKIRIM', child: Text('TERKIRIM')),
                                 DropdownMenuItem(value: 'CANCEL', child: Text('CANCEL')),
@@ -246,7 +247,7 @@ class _StoresManagerPageState extends State<StoresManagerPage> {
     String selectedSales = store.sales;
     
     String currentStatus = store.status.toUpperCase();
-    if (!['OTW', 'PROSES', 'TERKIRIM', 'CANCEL'].contains(currentStatus)) {
+    if (!['OTW', 'RAID 2', 'PROSES', 'TERKIRIM', 'CANCEL'].contains(currentStatus)) {
       currentStatus = 'OTW';
     }
 
@@ -302,6 +303,7 @@ class _StoresManagerPageState extends State<StoresManagerPage> {
                     decoration: const InputDecoration(labelText: 'Status Pengiriman', border: OutlineInputBorder()),
                     items: const [
                       DropdownMenuItem(value: 'OTW', child: Text('OTW')),
+                      DropdownMenuItem(value: 'RAID 2', child: Text('RAID 2')),
                       DropdownMenuItem(value: 'PROSES', child: Text('PROSES')),
                       DropdownMenuItem(value: 'TERKIRIM', child: Text('TERKIRIM')),
                       DropdownMenuItem(value: 'CANCEL', child: Text('CANCEL')),

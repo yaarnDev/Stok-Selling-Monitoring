@@ -1288,6 +1288,11 @@ class DeliveryCard extends StatelessWidget {
         badgeBorderColor = const Color(0xFFFDE68A);
         badgeTextColor = const Color(0xFFB45309);
         break;
+      case 'RAID 2':
+        badgeBgColor = const Color(0xFFFEF3C7);
+        badgeBorderColor = Color.fromARGB(255, 255, 236, 162);
+        badgeTextColor = Color.fromARGB(255, 255, 111, 0);
+        break;
       case 'PROSES':
         badgeBgColor = const Color(0xFFE0F2FE);
         badgeBorderColor = const Color(0xFFBAE6FD);
