@@ -11,17 +11,25 @@ class Stock {
   final String unit;
   final int quantity;
 
-  Stock({required this.id, required this.name, required this.quantity, required this.unit});
+  Stock(
+      {required this.id,
+      required this.name,
+      required this.quantity,
+      required this.unit});
 
   factory Stock.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
     final namaBarang = data['name']?.toString() ?? '';
-    
+
     return Stock(
       id: doc.id,
       name: namaBarang,
-      quantity: (data['quantity'] is int) ? data['quantity'] as int : int.tryParse('${data['quantity'] ?? 0}') ?? 0,
-      unit: namaBarang.contains('220ml') ? 'Karton' : (data['unit']?.toString() ?? 'Karton'),
+      quantity: (data['quantity'] is int)
+          ? data['quantity'] as int
+          : int.tryParse('${data['quantity'] ?? 0}') ?? 0,
+      unit: namaBarang.contains('220ml')
+          ? 'Karton'
+          : (data['unit']?.toString() ?? 'Karton'),
     );
   }
 }
@@ -36,9 +44,9 @@ class Store {
   final DateTime? createdAt;
 
   Store({
-    required this.id, 
-    required this.name, 
-    required this.address, 
+    required this.id,
+    required this.name,
+    required this.address,
     required this.sales,
     required this.status,
     required this.muatan,
@@ -47,20 +55,22 @@ class Store {
 
   factory Store.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
-    
-    String salesValue = data['sales']?.toString() ?? data['salesName']?.toString() ?? 'SYAKUR';
+
+    String salesValue =
+        data['sales']?.toString() ?? data['salesName']?.toString() ?? 'SYAKUR';
     String statusValue = data['status']?.toString() ?? 'PENDING';
-    List<dynamic> muatanList = data['muatan'] is List ? data['muatan'] as List : [];
-    
+    List<dynamic> muatanList =
+        data['muatan'] is List ? data['muatan'] as List : [];
+
     DateTime? createdTime;
     if (data['createdAt'] is Timestamp) {
       createdTime = (data['createdAt'] as Timestamp).toDate();
     }
 
     return Store(
-      id: doc.id, 
+      id: doc.id,
       name: data['name']?.toString() ?? '',
-      address: data['address']?.toString() ?? '', 
+      address: data['address']?.toString() ?? '',
       sales: salesValue,
       status: statusValue,
       muatan: muatanList,
@@ -71,27 +81,36 @@ class Store {
 
 class SalesHistory {
   final String id; // <-- TAMBAHKAN ID DOKUMEN FIRESTORE
+  final String storeId;
   final String sales;
   final List<dynamic> muatan;
   final DateTime timestamp;
   final String storeName;
+  final String address;
 
   SalesHistory({
-    required this.id, 
-    required this.sales, 
-    required this.muatan, 
-    required this.timestamp, 
-    required this.storeName
+    required this.id,
+    required this.storeId,
+    required this.sales,
+    required this.muatan,
+    required this.timestamp,
+    required this.storeName,
+    required this.address,
   });
 
   factory SalesHistory.fromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
     return SalesHistory(
       id: doc.id, // <-- SIMPAN ID DOKUMEN FIRESTORE
+      storeId: data['storeId']?.toString() ?? '',
       sales: data['sales']?.toString() ?? '',
       muatan: data['muatan'] is List ? data['muatan'] as List : [],
-      timestamp: (data['timestamp'] is Timestamp) ? (data['timestamp'] as Timestamp).toDate() : DateTime.now(),
-      storeName: data['storeName']?.toString() ?? 'Toko Terhapus (Reset Harian)',
+      timestamp: (data['timestamp'] is Timestamp)
+          ? (data['timestamp'] as Timestamp).toDate()
+          : DateTime.now(),
+      storeName:
+          data['storeName']?.toString() ?? 'Toko Terhapus (Reset Harian)',
+      address: data['address']?.toString() ?? '',
     );
   }
 }
@@ -125,13 +144,17 @@ class AdminProvider extends ChangeNotifier {
   List<SalesHistory> get history => List.unmodifiable(_history);
 
   Stream<DocumentSnapshot> streamSalesProfile(String salesName) {
-    return _db.collection('sales_profiles').doc(salesName.trim().toUpperCase()).snapshots();
+    return _db
+        .collection('sales_profiles')
+        .doc(salesName.trim().toUpperCase())
+        .snapshots();
   }
 
   // JALUR TOTAL GRATIS: Mengubah gambar menjadi teks murni agar tersimpan aman di Firestore tanpa CORS error
-  Future<void> uploadAndUpdateSalesAvatarCrossPlatform(String salesName, dynamic xFile, Uint8List imageBytes) async {
+  Future<void> uploadAndUpdateSalesAvatarCrossPlatform(
+      String salesName, dynamic xFile, Uint8List imageBytes) async {
     final String cleanName = salesName.trim().toUpperCase();
-    
+
     try {
       // Mengubah gambar menjadi string teks Base64
       final String base64String = base64Encode(imageBytes);
@@ -148,7 +171,8 @@ class AdminProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> uploadAndUpdateSalesAvatar(String salesName, File imageFile) async {
+  Future<void> uploadAndUpdateSalesAvatar(
+      String salesName, File imageFile) async {
     final bytes = await imageFile.readAsBytes();
     await uploadAndUpdateSalesAvatarCrossPlatform(salesName, null, bytes);
   }
@@ -156,12 +180,13 @@ class AdminProvider extends ChangeNotifier {
   Stream<List<Store>> streamStoresBySales(String salesName) {
     return _db.collection('stores').snapshots().map((snap) {
       final allStores = snap.docs.map((d) => Store.fromDoc(d)).toList();
-      
+
       _stores.clear();
       _stores.addAll(allStores);
-      
+
       return allStores.where((store) {
-        return store.sales.trim().toUpperCase() == salesName.trim().toUpperCase();
+        return store.sales.trim().toUpperCase() ==
+            salesName.trim().toUpperCase();
       }).toList();
     });
   }
@@ -176,7 +201,8 @@ class AdminProvider extends ChangeNotifier {
   }
 
   void _listenToStocks() {
-    _stocksSub = _db.collection('stocks').orderBy('name').snapshots().listen((snap) {
+    _stocksSub =
+        _db.collection('stocks').orderBy('name').snapshots().listen((snap) {
       _stocks
         ..clear()
         ..addAll(snap.docs.map((d) => Stock.fromDoc(d)));
@@ -194,14 +220,20 @@ class AdminProvider extends ChangeNotifier {
   }
 
   void _listenToSalesHistory() {
-    _db.collection('system_config').doc('sales_period').snapshots().listen((configSnap) {
+    _db
+        .collection('system_config')
+        .doc('sales_period')
+        .snapshots()
+        .listen((configSnap) {
       if (configSnap.exists) {
         final configData = configSnap.data() ?? {};
         if (configData['last_reset_monthly'] is Timestamp) {
-          _waktuResetBulananTerakhir = (configData['last_reset_monthly'] as Timestamp).toDate();
+          _waktuResetBulananTerakhir =
+              (configData['last_reset_monthly'] as Timestamp).toDate();
         }
         if (configData['last_reset_daily'] is Timestamp) {
-          _waktuResetHarianTerakhir = (configData['last_reset_daily'] as Timestamp).toDate();
+          _waktuResetHarianTerakhir =
+              (configData['last_reset_daily'] as Timestamp).toDate();
         }
       }
 
@@ -210,10 +242,10 @@ class AdminProvider extends ChangeNotifier {
         _history
           ..clear()
           ..addAll(snap.docs.map((d) => SalesHistory.fromDoc(d)));
-        
+
         // Urutkan manual lewat Dart biar ga perlu Firestore Index
         _history.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-        
+
         notifyListeners();
       });
     });
@@ -226,17 +258,26 @@ class AdminProvider extends ChangeNotifier {
 
         for (var barang in store.muatan) {
           final String namaBarang = barang['name']?.toString() ?? '';
-          final int qtyDiambil = (barang['qty'] is int) ? barang['qty'] as int : int.tryParse('${barang['qty']}') ?? 0;
+          final int qtyDiambil = (barang['qty'] is int)
+              ? barang['qty'] as int
+              : int.tryParse('${barang['qty']}') ?? 0;
 
           if (namaBarang.isEmpty || qtyDiambil <= 0) continue;
 
-          final stockQuery = await _db.collection('stocks').where('name', isEqualTo: namaBarang).limit(1).get();
+          final stockQuery = await _db
+              .collection('stocks')
+              .where('name', isEqualTo: namaBarang)
+              .limit(1)
+              .get();
 
           if (stockQuery.docs.isNotEmpty) {
             final stockRef = stockQuery.docs.first.reference;
             final freshStockDoc = await transaction.get(stockRef);
-            final freshStockData = freshStockDoc.data() as Map<String, dynamic>? ?? {};
-            final int currentQty = freshStockData['quantity'] is int ? freshStockData['quantity'] as int : 0;
+            final freshStockData =
+                freshStockDoc.data() as Map<String, dynamic>? ?? {};
+            final int currentQty = freshStockData['quantity'] is int
+                ? freshStockData['quantity'] as int
+                : 0;
 
             int finalQty = currentQty - qtyDiambil;
             if (finalQty < 0) finalQty = 0;
@@ -263,7 +304,8 @@ class AdminProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateStoreMuatan(String storeId, List<Map<String, dynamic>> newMuatan) async {
+  Future<void> updateStoreMuatan(
+      String storeId, List<Map<String, dynamic>> newMuatan) async {
     await _db.collection('stores').doc(storeId).update({'muatan': newMuatan});
     notifyListeners();
   }
@@ -275,31 +317,33 @@ class AdminProvider extends ChangeNotifier {
     final batch = _db.batch();
     for (var doc in snapshot.docs) {
       final data = doc.data();
-      final String statusValue = data['status']?.toString().toUpperCase() ?? 'PENDING';
+      final String statusValue =
+          data['status']?.toString().toUpperCase() ?? 'PENDING';
       final String salesName = data['sales']?.toString() ?? 'SYAKUR';
-      final List<dynamic> muatanList = data['muatan'] is List ? data['muatan'] as List : [];
+      final List<dynamic> muatanList =
+          data['muatan'] is List ? data['muatan'] as List : [];
 
       if (statusValue == 'TERKIRIM') {
         if (muatanList.isNotEmpty) {
           final historyRef = _db.collection('history_penjualan').doc();
           batch.set(historyRef, {
+            'storeId': doc.id,
             'sales': salesName.trim().toUpperCase(),
             'muatan': muatanList,
             'timestamp': FieldValue.serverTimestamp(),
             'storeName': data['name'] ?? '',
+            'address': data['address'] ?? '',
           });
         }
 
         batch.update(doc.reference, {
-          'status': 'PENDING', 
-          'muatan': [], 
+          'status': 'PENDING',
+          'muatan': [],
           'resetAt': FieldValue.serverTimestamp()
         });
       } else {
-        batch.update(doc.reference, {
-          'status': 'PENDING', 
-          'resetAt': FieldValue.serverTimestamp()
-        });
+        batch.update(doc.reference,
+            {'status': 'PENDING', 'resetAt': FieldValue.serverTimestamp()});
       }
     }
 
@@ -317,7 +361,7 @@ class AdminProvider extends ChangeNotifier {
   Future<void> resetBulananSemuaPenjualan() async {
     try {
       final batch = _db.batch();
-      
+
       batch.set(
         _db.collection('system_config').doc('sales_period'),
         {
@@ -332,14 +376,16 @@ class AdminProvider extends ChangeNotifier {
       _waktuResetBulananTerakhir = DateTime.now();
       _waktuResetHarianTerakhir = DateTime.now();
       notifyListeners();
-      
     } catch (e) {
       print("Error reset bulanan: $e");
       rethrow;
     }
   }
 
-  Future<void> addStore({required String name, required String address, required String sales}) async {
+  Future<void> addStore(
+      {required String name,
+      required String address,
+      required String sales}) async {
     await _db.collection('stores').add({
       'name': name.trim(),
       'address': address.trim(),
@@ -355,7 +401,10 @@ class AdminProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addStock({required String name, required int quantity, required String unit}) async {
+  Future<void> addStock(
+      {required String name,
+      required int quantity,
+      required String unit}) async {
     await _db.collection('stocks').add({
       'name': name.trim(),
       'quantity': quantity,
@@ -381,45 +430,52 @@ class AdminProvider extends ChangeNotifier {
     int totalTerjual = 0;
     final sekarang = DateTime.now();
 
-    // Hitung awal periode berjalan berdasarkan siklus tanggal 25
+    // Hitung awal periode berjalan berdasarkan siklus tanggal 26
     DateTime awalPeriode;
-    if (sekarang.day >= 25) {
-      awalPeriode = DateTime(sekarang.year, sekarang.month, 25);
+    if (sekarang.day >= 26) {
+      awalPeriode = DateTime(sekarang.year, sekarang.month, 26);
     } else {
-      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 25);
+      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 26);
     }
 
     // 1. Hitung dari Koleksi history_penjualan
     for (var record in _history) {
       if (record.sales.trim().toUpperCase() == salesName.trim().toUpperCase()) {
-        if (record.timestamp.isAfter(awalPeriode) || record.timestamp.isAtSameMomentAs(awalPeriode)) {
-          
-          if (_waktuResetBulananTerakhir != null && record.timestamp.isBefore(_waktuResetBulananTerakhir!)) {
+        if (record.timestamp.isAfter(awalPeriode) ||
+            record.timestamp.isAtSameMomentAs(awalPeriode)) {
+          if (_waktuResetBulananTerakhir != null &&
+              record.timestamp.isBefore(_waktuResetBulananTerakhir!)) {
             continue;
           }
 
           for (var item in record.muatan) {
-            final int qty = (item['qty'] is int) ? item['qty'] as int : int.tryParse('${item['qty']}') ?? 0;
+            final int qty = (item['qty'] is int)
+                ? item['qty'] as int
+                : int.tryParse('${item['qty']}') ?? 0;
             totalTerjual += qty;
           }
         }
       }
     }
-    
+
     // 2. Hitung dari Toko Aktif Berstatus TERKIRIM
     for (var store in _stores) {
       if (store.sales.trim().toUpperCase() == salesName.trim().toUpperCase() &&
           store.status.toUpperCase() == 'TERKIRIM') {
-        
         DateTime waktuToko = store.createdAt ?? sekarang;
 
-        if (waktuToko.isAfter(awalPeriode) || waktuToko.isAtSameMomentAs(awalPeriode)) {
-          if (_waktuResetBulananTerakhir != null && store.createdAt != null && store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
+        if (waktuToko.isAfter(awalPeriode) ||
+            waktuToko.isAtSameMomentAs(awalPeriode)) {
+          if (_waktuResetBulananTerakhir != null &&
+              store.createdAt != null &&
+              store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
             continue;
           }
 
           for (var item in store.muatan) {
-            final int qty = (item['qty'] is int) ? item['qty'] as int : int.tryParse('${item['qty']}') ?? 0;
+            final int qty = (item['qty'] is int)
+                ? item['qty'] as int
+                : int.tryParse('${item['qty']}') ?? 0;
             totalTerjual += qty;
           }
         }

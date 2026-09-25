@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart'; // Import Wajib Image Picker
 import '../admin/providers/admin_provider.dart';
-import 'history_penjualan.dart'; // Pastikan import file history baru abang ke sini
+import 'history_penjualan.dart'; // Pastikan import file history baru ke sini
 
 class AudienceHomeScreen extends StatefulWidget {
   const AudienceHomeScreen({super.key});
@@ -25,12 +25,12 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
   String _currentTabSalesName = "SYAKUR"; 
 
   final List<Map<String, dynamic>> salesCategories = [
-    {'name': 'SYAKUR', 'icon': Icons.badge, 'avatar': 'SY'},
-    {'name': 'FAISOL', 'icon': Icons.badge, 'avatar': 'FA'},
-    {'name': 'MULYADI', 'icon': Icons.badge, 'avatar': 'MU'},
-    {'name': 'LUAY', 'icon': Icons.badge, 'avatar': 'LU'},
-    {'name': 'INSTANSI', 'icon': Icons.business, 'avatar': 'IN'},
-    {'name': 'SHOPEE', 'icon': Icons.shopping_bag, 'avatar': 'SH'},
+    {'name': 'SYAKUR', 'icon': Icons.badge_outlined, 'avatar': 'SY'},
+    {'name': 'FAISOL', 'icon': Icons.badge_outlined, 'avatar': 'FA'},
+    {'name': 'MULYADI', 'icon': Icons.badge_outlined, 'avatar': 'MU'},
+    {'name': 'LUAY', 'icon': Icons.badge_outlined, 'avatar': 'LU'},
+    {'name': 'INSTANSI', 'icon': Icons.business_outlined, 'avatar': 'IN'},
+    {'name': 'SHOPEE', 'icon': Icons.shopping_bag_outlined, 'avatar': 'SH'},
   ];
 
   @override
@@ -84,7 +84,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           backgroundColor: Colors.white,
-          elevation: 10,
+          elevation: 6,
           child: Container(
             constraints: const BoxConstraints(maxWidth: 320),
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
@@ -96,7 +96,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                   children: [
                     Text(
                       'Profil $salesName',
-                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Color(0xFF0F172A), letterSpacing: -0.3),
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1E293B), letterSpacing: -0.3),
                     ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded, color: Color(0xFF64748B)),
@@ -110,17 +110,17 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                   alignment: Alignment.bottomRight,
                   children: [
                     Container(
-                      width: 150,
-                      height: 150,
+                      width: 140,
+                      height: 140,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFF1F5F9),
-                        border: Border.all(color: const Color(0xFF38BDF8), width: 3.5),
+                        border: Border.all(color: const Color(0xFF3B82F6), width: 3),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF0F172A).withOpacity(0.08),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+                            color: const Color(0xFF3B82F6).withOpacity(0.15),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
                           )
                         ],
                         image: decodedBytes != null
@@ -135,7 +135,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           : Center(
                               child: Text(
                                 initial, 
-                                style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900, color: Color(0xFF1E40AF))
+                                style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: Color(0xFF2563EB))
                               ),
                             ),
                     ),
@@ -146,20 +146,20 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           _showEditAvatarProcess(context, salesName); 
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(9),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: const Color(0xFF2563EB),
-                            border: Border.all(color: Colors.white, width: 2.5),
+                            border: Border.all(color: Colors.white, width: 2),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.blue.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
                               )
                             ]
                           ),
-                          child: const Icon(Icons.edit_rounded, color: Colors.white, size: 18),
+                          child: const Icon(Icons.edit_rounded, color: Colors.white, size: 16),
                         ),
                       ),
                   ],
@@ -167,11 +167,11 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                 const SizedBox(height: 20),
                 Text(
                   salesName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)), // BOLD NAMA SALES
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEFF6FF),
                     borderRadius: BorderRadius.circular(20),
@@ -204,7 +204,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
           builder: (context, setDialogState) {
             return AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              title: Text('Edit Foto $salesName', style: const TextStyle(fontWeight: FontWeight.w800)),
+              title: Text('Edit Foto $salesName', style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -230,7 +230,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF2563EB), width: 2.5),
+                          border: Border.all(color: const Color(0xFF2563EB), width: 2),
                           image: DecorationImage(
                             image: MemoryImage(selectedImageBytes!), 
                             fit: BoxFit.cover
@@ -344,19 +344,16 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER PREMIUM DENGAN GRADIENT
+          // HEADER MODERN VIBRANT SLATE BLUE
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF0F172A), Color(0xFF1E3A8A), Color(0xFF1E1B4B)], 
+                colors: [Color(0xFF1E293B), Color(0xFF0F172A)], 
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              boxShadow: [
-                BoxShadow(color: Color(0x33000000), blurRadius: 16, offset: Offset(0, 4))
-              ]
             ),
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 32, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 28, vertical: 16),
             child: SafeArea(
               bottom: false,
               child: isMobile 
@@ -370,11 +367,11 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: const Color(0xFF3B82F6).withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.white12)
+                                  border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3))
                                 ),
-                                child: const Icon(Icons.auto_graph_rounded, color: Color(0xFF38BDF8), size: 22),
+                                child: const Icon(Icons.insights_rounded, color: Color(0xFF60A5FA), size: 20),
                               ),
                               const SizedBox(width: 12),
                               Column(
@@ -382,10 +379,10 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                                 children: const [
                                   Text(
                                     'Monitoring & Selling', 
-                                    style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w900, letterSpacing: -0.5)
+                                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: -0.3)
                                   ),
                                   Text(
-                                    'Realtime Business Operations', 
+                                    'Realtime Operations Dashboard', 
                                     style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10, fontWeight: FontWeight.w500)
                                   ),
                                 ],
@@ -399,7 +396,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.history_rounded, color: Color(0xFF38BDF8), size: 20),
+                                  child: const Icon(Icons.history_rounded, color: Color(0xFF60A5FA), size: 18),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
@@ -414,20 +411,20 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF38BDF8), size: 20),
+                                  child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 18),
                                 ),
                               ),
                             ],
                           )
                         ],
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
                       Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.08), 
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.white.withOpacity(0.12)),
                         ),
                         child: TextField(
                           style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
@@ -437,9 +434,9 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           decoration: InputDecoration(
                             hintText: 'Cari nama toko secara instan...',
                             hintStyle: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 13), 
-                            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF38BDF8), size: 20),
+                            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF60A5FA), size: 18),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 10),
                           ),
                         ),
                       ),
@@ -453,11 +450,11 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: Colors.white12)
+                              color: const Color(0xFF3B82F6).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3))
                             ),
-                            child: const Icon(Icons.auto_graph_rounded, color: Color(0xFF38BDF8), size: 26),
+                            child: const Icon(Icons.insights_rounded, color: Color(0xFF60A5FA), size: 24),
                           ),
                           const SizedBox(width: 14),
                           Column(
@@ -465,7 +462,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                             children: const [
                               Text(
                                 'DailySale & StokMonitoring', 
-                                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: -0.5)
+                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: -0.3)
                               ),
                               Text(
                                 'Executive Operations & Analytics Dashboard', 
@@ -477,24 +474,24 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                       ),
                       Expanded(
                         child: Container(
-                          constraints: const BoxConstraints(maxWidth: 420),
+                          constraints: const BoxConstraints(maxWidth: 380),
                           margin: const EdgeInsets.symmetric(horizontal: 32),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.08), 
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: Colors.white.withOpacity(0.15), width: 1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.white.withOpacity(0.12)),
                           ),
                           child: TextField(
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
                             onChanged: (value) {
                               setState(() { _searchQuery = value.trim().toLowerCase(); });
                             },
                             decoration: InputDecoration(
                               hintText: 'Cari nama toko secara instan...',
                               hintStyle: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 13), 
-                              prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF38BDF8), size: 20),
+                              prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF60A5FA), size: 18),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                              contentPadding: const EdgeInsets.symmetric(vertical: 10),
                             ),
                           ),
                         ),
@@ -503,7 +500,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                         children: [
                           IconButton(
                             tooltip: 'History Penjualan Semua Toko',
-                            icon: const Icon(Icons.history_rounded, color: Colors.white70, size: 24),
+                            icon: const Icon(Icons.history_rounded, color: Colors.white70, size: 22),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -511,11 +508,11 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               );
                             },
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 8),
                           IconButton(
                             tooltip: 'Admin Panel',
                             onPressed: () => Navigator.pushNamed(context, '/admin'),
-                            icon: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF38BDF8), size: 24),
+                            icon: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 22),
                           ),
                         ],
                       )
@@ -524,46 +521,42 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
             ),
           ),
           
-          // TAB BAR DENGAN PILL SLEEK DESIGN
+          // TAB BAR CLEAN BLUE ACCENT
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white, 
+              color: Colors.white,
               boxShadow: [
-                BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))
+                BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 2))
               ]
             ),
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Center(
               child: TabBar(
                 controller: _tabController, 
                 isScrollable: true,
                 tabAlignment: TabAlignment.center,
                 indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF2563EB), Color(0xFF1D4ED8)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  color: const Color(0xFF2563EB),
                   boxShadow: [
-                    BoxShadow(color: const Color(0xFF2563EB).withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))
+                    BoxShadow(color: const Color(0xFF2563EB).withOpacity(0.25), blurRadius: 6, offset: const Offset(0, 2))
                   ]
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
                 unselectedLabelColor: const Color(0xFF64748B),
-                labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12), // BOLD NAMA SALES DI TAB
+                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
                 dividerColor: Colors.transparent,
                 tabs: salesCategories.map((tab) => Tab(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(tab['icon'] as IconData, size: 16), 
-                        const SizedBox(width: 8), 
+                        Icon(tab['icon'] as IconData, size: 15), 
+                        const SizedBox(width: 6), 
                         Text(tab['name'] as String)
                       ],
                     ),
@@ -584,7 +577,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: isMobile ? 16.0 : 24.0, top: 20.0, bottom: 8.0),
+                        padding: EdgeInsets.only(left: isMobile ? 16.0 : 24.0, top: 16.0, bottom: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -592,15 +585,15 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(color: const Color(0xFF0F172A), borderRadius: BorderRadius.circular(8)),
-                                  child: const Icon(Icons.warehouse_rounded, size: 16, color: Colors.white),
+                                  decoration: BoxDecoration(color: const Color(0xFF2563EB).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                                  child: const Icon(Icons.inventory_2_rounded, size: 16, color: Color(0xFF2563EB)),
                                 ),
-                                const SizedBox(width: 10),
-                                const Text('Sisa Stok Gudang Pusat', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), letterSpacing: -0.3)),
+                                const SizedBox(width: 8),
+                                const Text('Sisa Stok Gudang Pusat', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), letterSpacing: -0.3)),
                               ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(_getFormattedDate(), style: const TextStyle(color: Color(0xFF64748B), fontSize: 12, fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 2),
+                            Text(_getFormattedDate(), style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontWeight: FontWeight.w500)),
                           ],
                         ),
                       ),
@@ -626,7 +619,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                       ),
                       
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 24.0, vertical: 16.0), 
+                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 24.0, vertical: 14.0), 
                         child: const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0))
                       ),
                     ],
@@ -640,81 +633,161 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
     );
   }
 
+  /// BUILDER CARD STOK BERVARIAN (DINAMIS HIJAU / MERAH)
   Widget _buildStockGrid(BuildContext context) {
     final provider = Provider.of<AdminProvider>(context);
-    final stocks = provider.stocks;
+    final stocks = List.from(provider.stocks);
 
     if (stocks.isEmpty) {
       return Container(
-        height: 110, 
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
-        child: const Center(child: Text('No stock data available', style: TextStyle(color: Color(0xFF94A3B8))))
+        height: 105, 
+        decoration: BoxDecoration(
+          color: Colors.white, 
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+        ),
+        child: const Center(child: Text('No stock data available', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)))
       );
     }
+
+    final List<String> customOrder = [
+      '220ml',
+      '330ml',
+      '600ml',
+      '1500ml',
+      '19 liter',
+      'galon',
+    ];
+
+    stocks.sort((a, b) {
+      String nameA = a.name.toString().toLowerCase();
+      String nameB = b.name.toString().toLowerCase();
+
+      int indexA = customOrder.indexWhere((key) => nameA.contains(key));
+      int indexB = customOrder.indexWhere((key) => nameB.contains(key));
+
+      if (indexA == -1) indexA = 99;
+      if (indexB == -1) indexB = 99;
+
+      return indexA.compareTo(indexB);
+    });
 
     return Align(
       alignment: Alignment.centerLeft,
       child: SizedBox(
-        height: 115,
+        height: 105,
         child: ListView.separated(
           shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 4),
           scrollDirection: Axis.horizontal,
           itemCount: stocks.length,
-          separatorBuilder: (context, index) => const SizedBox(width: 12),
+          separatorBuilder: (context, index) => const SizedBox(width: 10),
           itemBuilder: (context, index) {
             var item = stocks[index];
             bool isLow = item.quantity < 50;
 
+            // Skema Warna Dinamis berdasarkan Status (Merah jika LOW, Hijau jika SAFE)
+            final Color accentColor = isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
+            final Color headerBgColor = isLow ? const Color(0xFFFEF2F2) : const Color(0xFFECFDF5);
+            final Color headerTextColor = isLow ? const Color(0xFF991B1B) : const Color(0xFF065F46);
+            final Color badgeBgColor = isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
+            final Color badgeBorderColor = isLow ? const Color(0xFFB91C1C) : const Color(0xFF059669);
+
             return Container(
-              width: 150,
-              padding: const EdgeInsets.all(16),
+              width: 148,
               decoration: BoxDecoration(
                 color: Colors.white, 
-                borderRadius: BorderRadius.circular(18), 
+                borderRadius: BorderRadius.circular(16), 
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.03), blurRadius: 14, offset: const Offset(0, 4))
+                  BoxShadow(
+                    color: accentColor.withOpacity(0.08), 
+                    blurRadius: 10, 
+                    offset: const Offset(0, 3)
+                  )
                 ],
-                border: Border.all(color: isLow ? const Color(0xFFFCA5A5) : const Color(0xFFE2E8F0), width: 1.5)
+                // GARIS SAMPING / BORDER IKUT HIJAU BILA SAFE, MERAH BILA LOW
+                border: Border.all(
+                  color: accentColor.withOpacity(0.4), 
+                  width: 1.5
+                )
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item.name, 
-                          style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.3), 
-                          maxLines: 1, 
-                          overflow: TextOverflow.ellipsis
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Column(
+                  children: [
+                    // TOP BAR HEADER
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      color: headerBgColor, 
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.name, 
+                              style: TextStyle(
+                                color: headerTextColor, 
+                                fontSize: 10, 
+                                fontWeight: FontWeight.w800
+                              ), 
+                              maxLines: 1, 
+                              overflow: TextOverflow.ellipsis
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: badgeBgColor, 
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: badgeBorderColor, 
+                                width: 0.8
+                              )
+                            ),
+                            child: Text(
+                              isLow ? 'LOW' : 'SAFE', 
+                              style: const TextStyle(
+                                color: Colors.white, 
+                                fontSize: 8, 
+                                fontWeight: FontWeight.w900
+                              )
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    
+                    // BODY QUANTITY
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              '${item.quantity}', 
+                              style: TextStyle(
+                                color: isLow ? const Color(0xFF991B1B) : const Color(0xFF0F172A), 
+                                fontSize: 22, 
+                                fontWeight: FontWeight.w900, 
+                                letterSpacing: -0.5
+                              )
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              item.unit, 
+                              style: TextStyle(
+                                color: accentColor, 
+                                fontSize: 10, 
+                                fontWeight: FontWeight.w700
+                              )
+                            ),
+                          ],
                         ),
                       ),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isLow ? Colors.red : const Color(0xFF10B981),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text('${item.quantity}', style: TextStyle(color: isLow ? Colors.red.shade900 : const Color(0xFF0F172A), fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
-                      const SizedBox(width: 4),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 3.0), 
-                        child: Text(item.unit, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w700)),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -722,7 +795,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
       ),
     );
   }
-  
+                    
   Widget _buildEnhancedDynamicSalesTarget(BuildContext context, bool isMobile) {
     final provider = Provider.of<AdminProvider>(context);
     final String upperName = _currentTabSalesName.trim().toUpperCase();
@@ -754,13 +827,13 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
         }
 
         return Container(
-          height: 102,
+          height: 97,
           decoration: BoxDecoration(
             color: Colors.white, 
-            borderRadius: BorderRadius.circular(18), 
-            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
+            borderRadius: BorderRadius.circular(16), 
+            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
             boxShadow: [
-              BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.04), blurRadius: 16, offset: const Offset(0, 4))
+              BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))
             ],
           ),
           child: Row(
@@ -770,14 +843,11 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                 child: Tooltip(
                   message: 'Lihat / Ubah Foto Profil',
                   child: Container(
-                    width: isMobile ? 100 : 120, 
+                    width: isMobile ? 100 : 115, 
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [const Color(0xFF2563EB).withOpacity(0.08), const Color(0xFF2563EB).withOpacity(0.01)],
-                        begin: Alignment.topLeft, end: Alignment.bottomRight,
-                      ),
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
+                      color: const Color(0xFF2563EB).withOpacity(0.04),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(14), bottomLeft: Radius.circular(14)),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -785,20 +855,17 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                         Builder(
                           builder: (context) {
                             if (upperName == 'INSTANSI') {
-                              return const CircleAvatar(radius: 20, backgroundColor: Color(0xFFEFF6FF), child: Icon(Icons.business_rounded, color: Color(0xFF2563EB), size: 20));
+                              return const CircleAvatar(radius: 18, backgroundColor: Color(0xFFEFF6FF), child: Icon(Icons.business_rounded, color: Color(0xFF2563EB), size: 18));
                             } else if (upperName == 'SHOPEE') {
-                              return const CircleAvatar(radius: 20, backgroundColor: Color(0xFFFFF7ED), child: Icon(Icons.shopping_bag_rounded, color: Colors.orange, size: 20));
+                              return const CircleAvatar(radius: 18, backgroundColor: Color(0xFFFFF7ED), child: Icon(Icons.shopping_bag_rounded, color: Colors.orange, size: 18));
                             } else {
                               return Container(
-                                width: 40,
-                                height: 40,
+                                width: 36,
+                                height: 36,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: const Color(0xFFE2E8F0),
                                   border: Border.all(color: Colors.white, width: 2),
-                                  boxShadow: [
-                                    BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4)
-                                  ]
                                 ),
                                 child: ClipOval(
                                   child: decodedBytes != null
@@ -807,37 +874,42 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                                           fit: BoxFit.cover,
                                         )
                                       : Center(
-                                          child: Text(initial, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: Color(0xFF1E40AF))),
+                                          child: Text(initial, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF1E40AF))),
                                         ),
                                 ),
                               );
                             }
                           },
                         ),
-                        const SizedBox(height: 6),
-                        Text(upperName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Color(0xFF0F172A))), 
-                        Text(bulanSekarang, style: const TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w600)), 
+                        const SizedBox(height: 4),
+                        Text(
+                          upperName, 
+                          maxLines: 1, 
+                          overflow: TextOverflow.ellipsis, 
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)) // BOLD NAMA SALES
+                        ), 
+                        Text(bulanSekarang, style: const TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w500)), 
                       ],
                     ),
                   ),
                 ),
               ),
               
-              Container(width: 1, height: 60, color: const Color(0xFFE2E8F0)),
+              Container(width: 1, height: 50, color: const Color(0xFFE2E8F0)),
 
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
                   child: isNonTarget 
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('TOTAL PENJUALAN', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-                        const SizedBox(height: 4),
-                        Text('$achieved Karton', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 19, color: Color(0xFF2563EB), letterSpacing: -0.5)),
+                        const Text('TOTAL PENJUALAN', style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w700, letterSpacing: 0.5)),
                         const SizedBox(height: 2),
-                        const Text('Periode berjalan bulan ini', style: TextStyle(fontSize: 9, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600)),
+                        Text('$achieved Karton', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: Color(0xFF2563EB), letterSpacing: -0.5)),
+                        const SizedBox(height: 2),
+                        const Text('Periode berjalan bulan ini', style: TextStyle(fontSize: 9, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500)),
                       ],
                     )
                   : Column(
@@ -850,18 +922,18 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
                           children: [
-                            const Text('CAPAIAN TARGET', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-                            Text('${(persen * 100).toStringAsFixed(1)}%', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: persen >= 1.0 ? const Color(0xFF10B981) : const Color(0xFFF59E0B))),
+                            const Text('CAPAIAN TARGET', style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+                            Text('${(persen * 100).toStringAsFixed(1)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: persen >= 1.0 ? const Color(0xFF10B981) : const Color(0xFFD97706))),
                           ],
                         ),
-                        const SizedBox(height: 4),
-                        Text('$achieved / $target Krt', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF0F172A))),
+                        const SizedBox(height: 2),
+                        Text('$achieved / $target Krt', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF0F172A))),
                         const SizedBox(height: 6),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(6),
                           child: LinearProgressIndicator(
                             value: persen, 
-                            minHeight: 7, 
+                            minHeight: 6, 
                             backgroundColor: const Color(0xFFF1F5F9),
                             valueColor: AlwaysStoppedAnimation<Color>(persen >= 1.0 ? const Color(0xFF10B981) : const Color(0xFFF59E0B)),
                           ),
@@ -892,7 +964,7 @@ class SalesDeliveryPipeline extends StatelessWidget {
 
   Widget _buildMuatanDetails(List<dynamic>? muatan) {
     if (muatan == null || muatan.isEmpty) {
-      return const Text('Muatan: Kosong', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.w500));
+      return const Text('Muatan: Kosong', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w500));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -901,22 +973,22 @@ class SalesDeliveryPipeline extends StatelessWidget {
         final int qty = item['qty'] ?? 0;
         final String unit = item['unit'] ?? '';
         return Padding(
-          padding: const EdgeInsets.only(top: 6.0),
+          padding: const EdgeInsets.only(top: 4.0),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: const Color(0xFFE2E8F0))
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('$qty $unit', style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.orange, fontSize: 12)),
-                const SizedBox(width: 8),
-                const Text('|', style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 12)),
-                const SizedBox(width: 8),
-                Flexible(child: Text(name, style: const TextStyle(color: Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w700), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                Text('$qty $unit', style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFFD97706), fontSize: 11)),
+                const SizedBox(width: 6),
+                const Text('|', style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 11)),
+                const SizedBox(width: 6),
+                Flexible(child: Text(name, style: const TextStyle(color: Color(0xFF334155), fontSize: 11, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
               ],
             ),
           ),
@@ -982,10 +1054,9 @@ class SalesDeliveryPipeline extends StatelessWidget {
 
             if (selisihHari >= 3) {
               agingWidget = Container(
-                margin: const EdgeInsets.only(top: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(6)),
-                child: Text('⚠️ PENDING $selisihHari HARI', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 9, fontWeight: FontWeight.w800)),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(4)),
+                child: Text('⚠️ PENDING $selisihHari HARI', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 9, fontWeight: FontWeight.w700)),
               );
             }
           }
@@ -997,13 +1068,21 @@ class SalesDeliveryPipeline extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildMuatanDetails(store.muatan),
-                const SizedBox(height: 8),
-                Row(
+                const SizedBox(height: 6),
+                // WRAP RESPONSIF: MENJAGA BADGE PENDING DARI OVERFLOW DI DISPLAY HP SEMPIT
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  runSpacing: 4,
                   children: [
-                    const Icon(Icons.calendar_month_rounded, size: 13, color: Color(0xFF94A3B8)),
-                    const SizedBox(width: 4),
-                    Text('Tgl Dimuat: $tanggalInfo', style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontWeight: FontWeight.w600)),
-                    const SizedBox(width: 6),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.access_time_rounded, size: 12, color: Color(0xFF94A3B8)),
+                        const SizedBox(width: 4),
+                        Text('Tgl Dimuat: $tanggalInfo', style: const TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.w500)),
+                      ],
+                    ),
                     agingWidget,
                   ],
                 ),
@@ -1026,7 +1105,7 @@ class SalesDeliveryPipeline extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildMuatanDetails(store.muatan),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
               ],
             ), 
             status: store.status.toUpperCase(), 
@@ -1037,7 +1116,7 @@ class SalesDeliveryPipeline extends StatelessWidget {
           children: [
             Positioned.fill(
               child: Padding(
-                padding: EdgeInsets.only(bottom: isMobile ? 75.0 : 0.0), 
+                padding: EdgeInsets.only(bottom: isMobile ? 70.0 : 0.0), 
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
@@ -1050,9 +1129,9 @@ class SalesDeliveryPipeline extends StatelessWidget {
                         child: isMobile 
                           ? Column(
                               children: [
-                                ExpandableDeliveryColumn(title: '🚚 ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards),
-                                const SizedBox(height: 20),
-                                ExpandableDeliveryColumn(title: '✅ RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards),
+                                ExpandableDeliveryColumn(title: 'ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards),
+                                const SizedBox(height: 16),
+                                ExpandableDeliveryColumn(title: 'RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards),
                               ],
                             )
                           : Column( 
@@ -1060,12 +1139,12 @@ class SalesDeliveryPipeline extends StatelessWidget {
                                 Row( 
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(child: ExpandableDeliveryColumn(title: '🚚 ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards)),
-                                    const SizedBox(width: 20),
-                                    Expanded(child: ExpandableDeliveryColumn(title: '✅ RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards)),
+                                    Expanded(child: ExpandableDeliveryColumn(title: 'ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards)),
+                                    const SizedBox(width: 16),
+                                    Expanded(child: ExpandableDeliveryColumn(title: 'RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards)),
                                   ],
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 16),
                                 _buildTotalsCard(pendingCount: totalPendingKarton, deliveredCount: totalDeliveredKarton),
                               ],
                             ),
@@ -1079,17 +1158,16 @@ class SalesDeliveryPipeline extends StatelessWidget {
             
             if (isMobile)
               Positioned(
-                left: 16,
-                right: 16,
-                bottom: 14,
+                left: 12,
+                right: 12,
+                bottom: 12,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF0F172A).withOpacity(0.12),
-                        blurRadius: 20,
-                        spreadRadius: 2,
+                        color: const Color(0xFF0F172A).withOpacity(0.08),
+                        blurRadius: 12,
                         offset: const Offset(0, 4),
                       )
                     ],
@@ -1105,46 +1183,51 @@ class SalesDeliveryPipeline extends StatelessWidget {
 
   Widget _buildTotalsCard({required int pendingCount, required int deliveredCount}) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white, 
-        borderRadius: BorderRadius.circular(20), 
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
-        boxShadow: [
-          BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.04), blurRadius: 16, offset: const Offset(0, -2))
-        ]
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
       ),
       child: Row(
         children: [
           Expanded(
             child: Row(
               children: [
-                const CircleAvatar(radius: 20, backgroundColor: Color(0xFFFEF3C7), child: Icon(Icons.pending_actions_rounded, color: Color(0xFFD97706), size: 20)),
-                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: const Color(0xFFFEF3C7), borderRadius: BorderRadius.circular(10)),
+                  child: const Icon(Icons.pending_actions_rounded, color: Color(0xFFD97706), size: 18),
+                ),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
-                    const Text('Total Antrian', style: TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w800, letterSpacing: 0.3)), 
-                    const SizedBox(height: 2), 
-                    Text('$pendingCount Krt', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFFD97706), letterSpacing: -0.5))
+                    const Text('Total Antrian', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w700)), 
+                    const SizedBox(height: 1), 
+                    Text('$pendingCount Krt', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFFD97706), letterSpacing: -0.3))
                   ]
                 ),
               ],
             )
           ),
-          Container(width: 1.5, height: 38, color: const Color(0xFFE2E8F0)),
-          const SizedBox(width: 12),
+          Container(width: 1, height: 32, color: const Color(0xFFE2E8F0)),
+          const SizedBox(width: 10),
           Expanded(
             child: Row(
               children: [
-                const CircleAvatar(radius: 20, backgroundColor: Color(0xFFD1FAE5), child: Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 20)),
-                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: const Color(0xFFD1FAE5), borderRadius: BorderRadius.circular(10)),
+                  child: const Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 18),
+                ),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start, 
                   children: [
-                    const Text('Total Terkirim', style: TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w800, letterSpacing: 0.3)), 
-                    const SizedBox(height: 2), 
-                    Text('$deliveredCount Krt', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF059669), letterSpacing: -0.5))
+                    const Text('Total Terkirim', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w700)), 
+                    const SizedBox(height: 1), 
+                    Text('$deliveredCount Krt', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF059669), letterSpacing: -0.3))
                   ]
                 ),
               ],
@@ -1184,15 +1267,8 @@ class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
     return Container(
       decoration: BoxDecoration(
         color: widget.bgColor, 
-        borderRadius: BorderRadius.circular(20), 
-        border: Border.all(color: widget.headerColor.withOpacity(0.2), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: widget.headerColor.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4)
-          )
-        ]
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: widget.headerColor.withOpacity(0.2), width: 1.2),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
@@ -1209,41 +1285,34 @@ class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
           },
           title: Row(
             children: [
-              Container(width: 4, height: 18, decoration: BoxDecoration(color: widget.headerColor, borderRadius: BorderRadius.circular(3))),
-              const SizedBox(width: 10),
+              Container(width: 3.5, height: 16, decoration: BoxDecoration(color: widget.headerColor, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(width: 8),
               Text(
                 widget.title, 
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: widget.headerColor, letterSpacing: -0.2),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: widget.headerColor, letterSpacing: 0.2),
               ),
               const SizedBox(width: 6),
               Text(
                 widget.subtitle,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: widget.headerColor.withOpacity(0.7)),
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: widget.headerColor.withOpacity(0.8)),
               )
             ],
           ),
-          trailing: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: widget.headerColor.withOpacity(0.08),
-              shape: BoxShape.circle
-            ),
-            child: Icon(
-              _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-              color: widget.headerColor,
-              size: 20,
-            ),
+          trailing: Icon(
+            _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+            color: widget.headerColor,
+            size: 20,
           ),
-          childrenPadding: const EdgeInsets.only(left: 14, right: 14, bottom: 16),
+          childrenPadding: const EdgeInsets.only(left: 12, right: 12, bottom: 14),
           expandedAlignment: Alignment.topLeft,
           children: [
             widget.items.isEmpty
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 36), 
+                      padding: const EdgeInsets.symmetric(vertical: 28), 
                       child: Text(
                         'Tidak ada rute pipeline', 
-                        style: TextStyle(color: widget.headerColor.withOpacity(0.5), fontSize: 13, fontWeight: FontWeight.w700),
+                        style: TextStyle(color: widget.headerColor.withOpacity(0.5), fontSize: 12, fontWeight: FontWeight.w600),
                       ),
                     ),
                   )
@@ -1251,7 +1320,7 @@ class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(), 
                     itemCount: widget.items.length, 
-                    separatorBuilder: (_, __) => const SizedBox(height: 10), 
+                    separatorBuilder: (_, __) => const SizedBox(height: 8), 
                     itemBuilder: (ctx, idx) => widget.items[idx],
                   ),
           ],
@@ -1289,9 +1358,9 @@ class DeliveryCard extends StatelessWidget {
         badgeTextColor = const Color(0xFFB45309);
         break;
       case 'RAID 2':
-        badgeBgColor = const Color(0xFFFEF3C7);
-        badgeBorderColor = Color.fromARGB(255, 255, 236, 162);
-        badgeTextColor = Color.fromARGB(255, 255, 111, 0);
+        badgeBgColor = const Color(0xFFFFF7ED);
+        badgeBorderColor = const Color(0xFFFFEDD5);
+        badgeTextColor = const Color(0xFFC2410C);
         break;
       case 'PROSES':
         badgeBgColor = const Color(0xFFE0F2FE);
@@ -1309,33 +1378,52 @@ class DeliveryCard extends StatelessWidget {
         badgeBorderColor = const Color(0xFFFECACA);
         badgeTextColor = const Color(0xFFB91C1C);
         break;
+      case 'PENDING':
+        badgeBgColor = const Color(0xFFFEF3C7);
+        badgeBorderColor = const Color(0xFFFDE68A);
+        badgeTextColor = const Color(0xFFB45309);
+        labelText = 'PENDING';
+        break;
     }
 
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white, 
-        borderRadius: BorderRadius.circular(16), 
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
+        borderRadius: BorderRadius.circular(12), 
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
         boxShadow: [
-          BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 3))
+          BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.015), blurRadius: 6, offset: const Offset(0, 2))
         ]
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
-                Text(shopName, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Color(0xFF0F172A), letterSpacing: -0.2), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(
+                  shopName, 
+                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF0F172A), letterSpacing: -0.2), // BOLD NAMA TOKO
+                  maxLines: 1, 
+                  overflow: TextOverflow.ellipsis
+                ),
                 if (address.isNotEmpty) ...[
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 3),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_rounded, size: 13, color: Color(0xFF94A3B8)),
-                      const SizedBox(width: 4),
-                      Expanded(child: Text(address, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      const Icon(Icons.location_on_rounded, size: 12, color: Color(0xFF94A3B8)),
+                      const SizedBox(width: 3),
+                      Expanded(
+                        child: Text(
+                          address, 
+                          style: const TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w500), 
+                          maxLines: 1, 
+                          overflow: TextOverflow.ellipsis
+                        )
+                      ),
                     ],
                   ),
                 ],
@@ -1344,17 +1432,17 @@ class DeliveryCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5), 
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), 
             decoration: BoxDecoration(
               color: badgeBgColor, 
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(color: badgeBorderColor, width: 1)
             ), 
             child: Text(
               labelText, 
-              style: TextStyle(color: badgeTextColor, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5)
+              style: TextStyle(color: badgeTextColor, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 0.3)
             )
           ),
         ],

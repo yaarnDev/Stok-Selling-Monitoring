@@ -37,7 +37,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   }
 
   // ==================== ENGINE CETAK REKAP DALAM BENTUK PDF ====================
-  Future<void> _generateAndDownloadPdf(List<Map<String, dynamic>> dataList) async {
+  Future<void> _generateAndDownloadPdf(
+      List<Map<String, dynamic>> dataList) async {
     final pdf = pw.Document();
 
     // 1. Mengelompokkan data berdasarkan Sales jika filter "SEMUA"
@@ -49,7 +50,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
     // 2. LOGIKA HITUNG OTOMATIS TOTAL PER VARIAN & TOTAL KESELURUHAN
     Map<String, Map<String, int>> variantTotals = {};
-    Map<String, int> grandTotalsByUnit = {}; // Menyimpan total keseluruhan per satuan (misal: Krt, Galon, Pcs)
+    Map<String, int> grandTotalsByUnit =
+        {}; // Menyimpan total keseluruhan per satuan (misal: Krt, Galon, Pcs)
     int absoluteTotalQty = 0; // Total angka akumulasi murni
 
     for (var item in dataList) {
@@ -68,7 +70,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
         if (!variantTotals.containsKey(prodName)) {
           variantTotals[prodName] = {};
         }
-        variantTotals[prodName]![unit] = (variantTotals[prodName]![unit] ?? 0) + qty;
+        variantTotals[prodName]![unit] =
+            (variantTotals[prodName]![unit] ?? 0) + qty;
 
         // Hitung total gabungan keseluruhan
         grandTotalsByUnit[unit] = (grandTotalsByUnit[unit] ?? 0) + qty;
@@ -77,7 +80,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     }
 
     // Merangkai teks total gabungan (contoh: "1.250 Krt + 150 Galon (Total 1.400 Barang)")
-    String grandTotalText = grandTotalsByUnit.entries.map((e) => "${e.value} ${e.key}").join(" + ");
+    String grandTotalText =
+        grandTotalsByUnit.entries.map((e) => "${e.value} ${e.key}").join(" + ");
     if (grandTotalsByUnit.length > 1) {
       grandTotalText += " (Total: $absoluteTotalQty Barang/Karton)";
     }
@@ -111,13 +115,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                     ),
                     pw.Text(
                       'Tanggal Cetak: ${DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.now())} WIB',
-                      style: const pw.TextStyle(color: PdfColors.white, fontSize: 9),
+                      style: const pw.TextStyle(
+                          color: PdfColors.white, fontSize: 9),
                     ),
                   ],
                 ),
                 pw.Text(
                   'Hal ${context.pageNumber} dari ${context.pagesCount}',
-                  style: pw.TextStyle(color: PdfColors.white, fontSize: 9, fontWeight: pw.FontWeight.bold),
+                  style: pw.TextStyle(
+                      color: PdfColors.white,
+                      fontSize: 9,
+                      fontWeight: pw.FontWeight.bold),
                 ),
               ],
             ),
@@ -166,8 +174,11 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                             text: pw.TextSpan(
                               children: [
                                 pw.TextSpan(
-                                  text: 'Total penjualan anda di bulan ini mencapai: ',
-                                  style: pw.TextStyle(fontSize: 9.5, color: PdfColors.white),
+                                  // text: 'Total penjualan anda di bulan ini mencapai: ',
+                                  text:
+                                      'Total penjualan anda di pertengahan bulan ini mencapai: ',
+                                  style: pw.TextStyle(
+                                      fontSize: 9.5, color: PdfColors.white),
                                 ),
                                 pw.TextSpan(
                                   text: grandTotalText,
@@ -182,7 +193,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           ),
                           pw.SizedBox(height: 3),
                           pw.Text(
-                            'Ayo tingkatkan lagi penjualanmu di bulan depan!',
+                            //'Ayo tingkatkan lagi penjualanmu di bulan depan!',//
+                            'Bulan belum habis, target jangan ikut pasrah. Semangat kejar targetnya ya kids!',
                             style: pw.TextStyle(
                               fontSize: 8.5,
                               fontStyle: pw.FontStyle.italic,
@@ -195,7 +207,10 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
                     pw.Text(
                       'RINCIAN TOTAL PER VARIAN:',
-                      style: pw.TextStyle(fontSize: 8.5, fontWeight: pw.FontWeight.bold, color: PdfColors.teal900),
+                      style: pw.TextStyle(
+                          fontSize: 8.5,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.teal900),
                     ),
                     pw.SizedBox(height: 5),
                     pw.Wrap(
@@ -203,24 +218,34 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       runSpacing: 5,
                       children: variantTotals.entries.map((entry) {
                         String name = entry.key;
-                        String unitsSummary = entry.value.entries.map((e) => "${e.value} ${e.key}").join(" + ");
+                        String unitsSummary = entry.value.entries
+                            .map((e) => "${e.value} ${e.key}")
+                            .join(" + ");
                         return pw.Container(
-                          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          padding: const pw.EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 3),
                           decoration: pw.BoxDecoration(
                             color: PdfColors.white,
                             borderRadius: pw.BorderRadius.circular(3),
-                            border: pw.Border.all(color: PdfColors.teal300, width: 0.5),
+                            border: pw.Border.all(
+                                color: PdfColors.teal300, width: 0.5),
                           ),
                           child: pw.RichText(
                             text: pw.TextSpan(
                               children: [
                                 pw.TextSpan(
                                   text: '$name: ',
-                                  style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.black),
+                                  style: pw.TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: pw.FontWeight.bold,
+                                      color: PdfColors.black),
                                 ),
                                 pw.TextSpan(
                                   text: unitsSummary,
-                                  style: pw.TextStyle(fontSize: 8, fontWeight: pw.FontWeight.bold, color: PdfColors.teal800),
+                                  style: pw.TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: pw.FontWeight.bold,
+                                      color: PdfColors.teal800),
                                 ),
                               ],
                             ),
@@ -240,7 +265,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             widgets.add(
               pw.Container(
                 margin: const pw.EdgeInsets.only(top: 8, bottom: 6),
-                padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.teal50,
                   borderRadius: pw.BorderRadius.circular(3),
@@ -251,11 +277,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   children: [
                     pw.Text(
                       'SALES: $salesName',
-                      style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold, color: PdfColors.teal900),
+                      style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.teal900),
                     ),
                     pw.Text(
                       'Total: ${items.length} Toko',
-                      style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold, color: PdfColors.teal900),
+                      style: pw.TextStyle(
+                          fontSize: 9,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.teal900),
                     ),
                   ],
                 ),
@@ -265,7 +297,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             // Tabel Data Toko untuk Sales Ini
             widgets.add(
               pw.Table(
-                border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+                border:
+                    pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
                 columnWidths: const {
                   0: pw.FlexColumnWidth(2.5), // Nama Toko
                   1: pw.FlexColumnWidth(4.5), // Detail Muatan
@@ -273,25 +306,35 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                 },
                 children: [
                   pw.TableRow(
-                    decoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                    decoration:
+                        const pw.BoxDecoration(color: PdfColors.grey100),
                     children: [
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(5),
-                        child: pw.Text('NAMA TOKO', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+                        child: pw.Text('NAMA TOKO',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(5),
-                        child: pw.Text('DETAIL MUATAN BARANG', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+                        child: pw.Text('DETAIL MUATAN BARANG',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
                       ),
                       pw.Padding(
                         padding: const pw.EdgeInsets.all(5),
-                        child: pw.Text('TANGGAL TERKIRIM', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
+                        child: pw.Text('TANGGAL TERKIRIM',
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 8.5)),
                       ),
                     ],
                   ),
                   ...items.map((item) {
                     final List<dynamic> muatan = item['muatan'] ?? [];
-                    String detail = muatan.map((m) => "${m['qty']} ${m['unit'] ?? 'Krt'} ${m['name']}").join(", ");
+                    String detail = muatan
+                        .map((m) =>
+                            "${m['qty']} ${m['unit'] ?? 'Krt'} ${m['name']}")
+                        .join(", ");
                     DateTime ts = item['timestamp'] as DateTime;
                     String tglStr = DateFormat('dd/MM/yy HH:mm').format(ts);
 
@@ -299,15 +342,20 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(item['name'] ?? '', style: pw.TextStyle(fontSize: 8.5, fontWeight: pw.FontWeight.bold)),
+                          child: pw.Text(item['name'] ?? '',
+                              style: pw.TextStyle(
+                                  fontSize: 8.5,
+                                  fontWeight: pw.FontWeight.bold)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(detail, style: const pw.TextStyle(fontSize: 8.5)),
+                          child: pw.Text(detail,
+                              style: const pw.TextStyle(fontSize: 8.5)),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(5),
-                          child: pw.Text(tglStr, style: const pw.TextStyle(fontSize: 8)),
+                          child: pw.Text(tglStr,
+                              style: const pw.TextStyle(fontSize: 8)),
                         ),
                       ],
                     );
@@ -324,7 +372,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       ),
     );
 
-    final String namaFile = 'REKAP_HISTORY_${_selectedSalesFilter}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.pdf';
+    final String namaFile =
+        'REKAP_HISTORY_${_selectedSalesFilter}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.pdf';
 
     // Trigger preview & download/print PDF universal
     await Printing.sharePdf(
@@ -334,20 +383,28 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   }
 
   // ==================== DIALOG HAPUS HISTORY (SUPER CEPAT DENGAN FIRESTORE BATCH) ====================
-  void _showDeleteHistoryDialog(BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
+  void _showDeleteHistoryDialog(
+      BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
     if (currentFilteredList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tidak ada data riwayat untuk dihapus!'), backgroundColor: Colors.orange),
+        const SnackBar(
+            content: Text('Tidak ada data riwayat untuk dihapus!'),
+            backgroundColor: Colors.orange),
       );
       return;
     }
 
     final passwordController = TextEditingController();
-    int deleteCount = currentFilteredList.where((item) => _selectedDeleteItemKeys.contains(_getItemUniqueKey(item))).length;
+    int deleteCount = currentFilteredList
+        .where(
+            (item) => _selectedDeleteItemKeys.contains(_getItemUniqueKey(item)))
+        .length;
 
     if (deleteCount == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pilih/centang minimal 1 toko yang mau dihapus!'), backgroundColor: Colors.orange),
+        const SnackBar(
+            content: Text('Pilih/centang minimal 1 toko yang mau dihapus!'),
+            backgroundColor: Colors.orange),
       );
       return;
     }
@@ -356,12 +413,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Row(
             children: [
               Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
               SizedBox(width: 8),
-              Text('Konfirmasi Hapus History', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF0F172A))),
+              Text('Konfirmasi Hapus History',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A))),
             ],
           ),
           content: Column(
@@ -370,14 +432,22 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             children: [
               Text(
                 'Kategori Filter: $_selectedSalesFilter',
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blueAccent),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Colors.blueAccent),
               ),
               const SizedBox(height: 8),
-              Text('• Jumlah Toko Dicentang: $deleteCount Toko', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+              Text('• Jumlah Toko Dicentang: $deleteCount Toko',
+                  style: const TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               const Text(
                 'Toko yang dicentang akan dihapus permanen dari riwayat!',
-                style: TextStyle(fontSize: 11, color: Colors.redAccent, fontStyle: FontStyle.italic),
+                style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.redAccent,
+                    fontStyle: FontStyle.italic),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -386,7 +456,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                 decoration: InputDecoration(
                   labelText: 'Password Admin',
                   hintText: 'Masukkan password admin...',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   isDense: true,
                   prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18),
                 ),
@@ -396,12 +467,14 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+              child: const Text('Batal',
+                  style: TextStyle(color: Color(0xFF64748B))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 elevation: 0,
               ),
               onPressed: () async {
@@ -411,7 +484,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   showDialog(
                     context: context,
                     barrierDismissible: false,
-                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                    builder: (_) =>
+                        const Center(child: CircularProgressIndicator()),
                   );
 
                   try {
@@ -428,10 +502,14 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
                         if (docId.isNotEmpty) {
                           if (source == 'history_penjualan') {
-                            final ref = FirebaseFirestore.instance.collection('history_penjualan').doc(docId);
+                            final ref = FirebaseFirestore.instance
+                                .collection('history_penjualan')
+                                .doc(docId);
                             batch.delete(ref);
                           } else if (source == 'stores') {
-                            final ref = FirebaseFirestore.instance.collection('stores').doc(docId);
+                            final ref = FirebaseFirestore.instance
+                                .collection('stores')
+                                .doc(docId);
                             batch.update(ref, {
                               'status': 'PENDING',
                               'muatan': [],
@@ -453,11 +531,13 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
                     if (context.mounted) {
                       Navigator.pop(context); // Tutup loading dialog
-                      Provider.of<AdminProvider>(context, listen: false).startListening();
+                      Provider.of<AdminProvider>(context, listen: false)
+                          .startListening();
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('⚡ Berhasil menghapus $deletedItemsCount riwayat sekaligus!'),
+                          content: Text(
+                              '⚡ Berhasil menghapus $deletedItemsCount riwayat sekaligus!'),
                           backgroundColor: Colors.green,
                           behavior: SnackBarBehavior.floating,
                         ),
@@ -467,17 +547,23 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                     if (context.mounted) {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Gagal menghapus history: $e'), backgroundColor: Colors.red),
+                        SnackBar(
+                            content: Text('Gagal menghapus history: $e'),
+                            backgroundColor: Colors.red),
                       );
                     }
                   }
                 } else {
                   ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('Akses Ditolak! Password Admin Salah.'), backgroundColor: Colors.red),
+                    const SnackBar(
+                        content: Text('Akses Ditolak! Password Admin Salah.'),
+                        backgroundColor: Colors.red),
                   );
                 }
               },
-              child: const Text('Proses Hapus', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text('Proses Hapus',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -486,10 +572,13 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   }
 
   // ==================== DIALOG CETAK PDF WITH ADMIN AUTH ====================
-  void _showPrintPdfDialog(BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
+  void _showPrintPdfDialog(
+      BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
     if (currentFilteredList.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tidak ada data riwayat untuk dicetak!'), backgroundColor: Colors.orange),
+        const SnackBar(
+            content: Text('Tidak ada data riwayat untuk dicetak!'),
+            backgroundColor: Colors.orange),
       );
       return;
     }
@@ -500,23 +589,34 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Row(
             children: [
               Icon(Icons.picture_as_pdf_rounded, color: Colors.teal),
               SizedBox(width: 8),
-              Text('Cetak Rekap PDF', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF0F172A))),
+              Text('Cetak Rekap PDF',
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A))),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Filter Sales: $_selectedSalesFilter', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.teal)),
+              Text('Filter Sales: $_selectedSalesFilter',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: Colors.teal)),
               const SizedBox(height: 4),
               Text('Total Data: ${currentFilteredList.length} Toko'),
               const SizedBox(height: 12),
-              const Text('Format PDF mendukung auto-halaman untuk data sebanyak apapun.', style: TextStyle(fontSize: 11, color: Colors.grey)),
+              const Text(
+                  'Format PDF mendukung auto-halaman untuk data sebanyak apapun.',
+                  style: TextStyle(fontSize: 11, color: Colors.grey)),
               const SizedBox(height: 16),
               TextField(
                 controller: passwordController,
@@ -524,7 +624,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                 decoration: InputDecoration(
                   labelText: 'Password Admin',
                   hintText: 'Masukkan password admin...',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   isDense: true,
                   prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18),
                 ),
@@ -534,12 +635,14 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+              child: const Text('Batal',
+                  style: TextStyle(color: Color(0xFF64748B))),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 elevation: 0,
               ),
               onPressed: () async {
@@ -548,11 +651,15 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   _generateAndDownloadPdf(currentFilteredList);
                 } else {
                   ScaffoldMessenger.of(ctx).showSnackBar(
-                    const SnackBar(content: Text('Akses Ditolak! Password Admin Salah.'), backgroundColor: Colors.red),
+                    const SnackBar(
+                        content: Text('Akses Ditolak! Password Admin Salah.'),
+                        backgroundColor: Colors.red),
                   );
                 }
               },
-              child: const Text('Cetak & Unduh PDF', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text('Cetak & Unduh PDF',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -561,7 +668,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   }
 
   // ==================== DIALOG TRANSFER / PINDAH SALES ====================
-  void _showTransferSalesDialog(BuildContext context, Map<String, dynamic> item) {
+  void _showTransferSalesDialog(
+      BuildContext context, Map<String, dynamic> item) {
     final passwordController = TextEditingController();
     String currentSales = item['sales'].toString().toUpperCase();
     String targetSales = currentSales;
@@ -581,12 +689,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
         return StatefulBuilder(
           builder: (ctx, setStateDialog) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
               title: const Row(
                 children: [
                   Icon(Icons.swap_horiz_rounded, color: Color(0xFF2563EB)),
                   SizedBox(width: 8),
-                  Text('Pindah / Rolling Sales', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF0F172A))),
+                  Text('Pindah / Rolling Sales',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF0F172A))),
                 ],
               ),
               content: SingleChildScrollView(
@@ -594,21 +707,34 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Toko: ${item['name']}', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF0F172A))),
+                    Text('Toko: ${item['name']}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            color: Color(0xFF0F172A))),
                     const SizedBox(height: 4),
-                    Text('Sales Saat Ini: $currentSales', style: const TextStyle(fontSize: 12, color: Colors.orange, fontWeight: FontWeight.bold)),
+                    Text('Sales Saat Ini: $currentSales',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: availableSalesList.contains(targetSales) ? targetSales : availableSalesList.first,
+                      value: availableSalesList.contains(targetSales)
+                          ? targetSales
+                          : availableSalesList.first,
                       decoration: InputDecoration(
                         labelText: 'Pindah ke Sales',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         isDense: true,
                       ),
                       items: availableSalesList.map((sales) {
                         return DropdownMenuItem(
                           value: sales,
-                          child: Text(sales, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                          child: Text(sales,
+                              style: const TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold)),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -626,9 +752,11 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       decoration: InputDecoration(
                         labelText: 'Password Admin',
                         hintText: 'Masukkan password admin...',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         isDense: true,
-                        prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18),
+                        prefixIcon:
+                            const Icon(Icons.lock_outline_rounded, size: 18),
                       ),
                     ),
                   ],
@@ -637,19 +765,23 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
+                  child: const Text('Batal',
+                      style: TextStyle(color: Color(0xFF64748B))),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2563EB),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
                   ),
                   onPressed: () async {
                     if (passwordController.text.trim() == "admin123") {
                       if (targetSales == currentSales) {
                         ScaffoldMessenger.of(ctx).showSnackBar(
-                          const SnackBar(content: Text('Pilih nama sales yang berbeda!'), backgroundColor: Colors.orange),
+                          const SnackBar(
+                              content: Text('Pilih nama sales yang berbeda!'),
+                              backgroundColor: Colors.orange),
                         );
                         return;
                       }
@@ -659,7 +791,10 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
                       if (docId.isEmpty) {
                         ScaffoldMessenger.of(ctx).showSnackBar(
-                          const SnackBar(content: Text('Gagal! ID Dokumen tidak ditemukan.'), backgroundColor: Colors.red),
+                          const SnackBar(
+                              content:
+                                  Text('Gagal! ID Dokumen tidak ditemukan.'),
+                              backgroundColor: Colors.red),
                         );
                         return;
                       }
@@ -669,11 +804,15 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        builder: (_) => const Center(child: CircularProgressIndicator()),
+                        builder: (_) =>
+                            const Center(child: CircularProgressIndicator()),
                       );
 
                       try {
-                        await FirebaseFirestore.instance.collection(source).doc(docId).update({
+                        await FirebaseFirestore.instance
+                            .collection(source)
+                            .doc(docId)
+                            .update({
                           'sales': targetSales,
                         });
 
@@ -681,7 +820,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('🎉 Penjualan "${item['name']}" berhasil dipindah ke $targetSales!'),
+                              content: Text(
+                                  '🎉 Penjualan "${item['name']}" berhasil dipindah ke $targetSales!'),
                               backgroundColor: Colors.green,
                               behavior: SnackBarBehavior.floating,
                             ),
@@ -691,17 +831,24 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                         if (context.mounted) {
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Gagal memindahkan sales: $e'), backgroundColor: Colors.red),
+                            SnackBar(
+                                content: Text('Gagal memindahkan sales: $e'),
+                                backgroundColor: Colors.red),
                           );
                         }
                       }
                     } else {
                       ScaffoldMessenger.of(ctx).showSnackBar(
-                        const SnackBar(content: Text('Akses Ditolak! Password Admin Salah.'), backgroundColor: Colors.red),
+                        const SnackBar(
+                            content:
+                                Text('Akses Ditolak! Password Admin Salah.'),
+                            backgroundColor: Colors.red),
                       );
                     }
                   },
-                  child: const Text('Simpan Perubahan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text('Simpan Perubahan',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             );
@@ -715,28 +862,48 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<AdminProvider>(context);
     final sekarang = DateTime.now();
-    
-    // ==================== SISIPAN HITUNG PERIODE DARI TANGGAL 25 ====================
+
+    // ==================== SISIPAN HITUNG PERIODE DARI TANGGAL 26 ====================
     DateTime awalPeriode;
-    if (sekarang.day >= 25) {
-      awalPeriode = DateTime(sekarang.year, sekarang.month, 25);
+    if (sekarang.day >= 26) {
+      awalPeriode = DateTime(sekarang.year, sekarang.month, 26);
     } else {
-      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 25);
+      awalPeriode = DateTime(sekarang.year, sekarang.month - 1, 26);
     }
     // =================================================================================
 
     List<Map<String, dynamic>> gabunganHistory = [];
+    final Map<String, Store> storesById = {
+      for (final store in provider.stores) store.id: store,
+    };
+    final Map<String, Set<String>> addressesByStoreName = {};
+    for (final store in provider.stores) {
+      addressesByStoreName
+          .putIfAbsent(store.name.trim().toLowerCase(), () => {})
+          .add(store.address);
+    }
 
     for (var record in provider.history) {
-      if (record.timestamp.isAfter(awalPeriode) || record.timestamp.isAtSameMomentAs(awalPeriode)) {
+      if (record.timestamp.isAfter(awalPeriode) ||
+          record.timestamp.isAtSameMomentAs(awalPeriode)) {
+        final Store? storeById = storesById[record.storeId];
+        final Set<String>? matchingAddresses =
+            addressesByStoreName[record.storeName.trim().toLowerCase()];
+        final String address = record.address.trim().isNotEmpty
+            ? record.address
+            : storeById?.address ??
+                (matchingAddresses?.length == 1
+                    ? matchingAddresses!.first
+                    : '');
         gabunganHistory.add({
           'docId': record.id,
           'source': 'history_penjualan',
+          'storeId': record.storeId,
           'name': record.storeName,
           'sales': record.sales,
           'muatan': record.muatan,
           'timestamp': record.timestamp,
-          'address': 'Riwayat Terbuku (Selesai)',
+          'address': address,
         });
       }
     }
@@ -744,10 +911,12 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     for (var store in provider.stores) {
       if (store.status.toUpperCase() == 'TERKIRIM') {
         DateTime waktuToko = store.createdAt ?? sekarang;
-        if (waktuToko.isAfter(awalPeriode) || waktuToko.isAtSameMomentAs(awalPeriode)) {
+        if (waktuToko.isAfter(awalPeriode) ||
+            waktuToko.isAtSameMomentAs(awalPeriode)) {
           gabunganHistory.add({
             'docId': store.id,
             'source': 'stores',
+            'storeId': store.id,
             'name': store.name,
             'sales': store.sales,
             'muatan': store.muatan,
@@ -763,8 +932,10 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       final String address = item['address'].toString().toLowerCase();
       final String salesName = item['sales'].toString().toUpperCase();
 
-      final matchesSearch = storeName.contains(_historySearchQuery) || address.contains(_historySearchQuery);
-      final matchesSales = _selectedSalesFilter == 'SEMUA' || salesName == _selectedSalesFilter;
+      final matchesSearch = storeName.contains(_historySearchQuery) ||
+          address.contains(_historySearchQuery);
+      final matchesSales =
+          _selectedSalesFilter == 'SEMUA' || salesName == _selectedSalesFilter;
 
       return matchesSearch && matchesSales;
     }).toList();
@@ -776,14 +947,19 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     });
 
     bool isAllCurrentSelected = filteredList.isNotEmpty &&
-        filteredList.every((item) => _selectedDeleteItemKeys.contains(_getItemUniqueKey(item)));
+        filteredList.every((item) =>
+            _selectedDeleteItemKeys.contains(_getItemUniqueKey(item)));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
         title: const Text(
           'History Semua Penjualan',
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Color(0xFF0F172A), letterSpacing: -0.3),
+          style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 18,
+              color: Color(0xFF0F172A),
+              letterSpacing: -0.3),
         ),
         elevation: 0,
         backgroundColor: Colors.white,
@@ -804,11 +980,15 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
-                        BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2))
+                        BoxShadow(
+                            color: const Color(0xFF0F172A).withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2))
                       ],
                     ),
                     child: TextField(
-                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w500),
                       onChanged: (value) {
                         setState(() {
                           _historySearchQuery = value.trim().toLowerCase();
@@ -816,17 +996,22 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Cari nama toko atau resi...',
-                        hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF2563EB), size: 20),
+                        hintStyle: const TextStyle(
+                            color: Color(0xFF94A3B8), fontSize: 13),
+                        prefixIcon: const Icon(Icons.search_rounded,
+                            color: Color(0xFF2563EB), size: 20),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE2E8F0)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE2E8F0)),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
@@ -838,26 +1023,36 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
-                        BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 2))
+                        BoxShadow(
+                            color: const Color(0xFF0F172A).withOpacity(0.02),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2))
                       ],
                     ),
                     child: DropdownButtonFormField<String>(
                       value: _selectedSalesFilter,
                       decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE2E8F0)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE2E8F0)),
                         ),
                       ),
                       items: _salesList.map((sales) {
                         return DropdownMenuItem(
                           value: sales,
-                          child: Text(sales, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+                          child: Text(sales,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0F172A))),
                         );
                       }).toList(),
                       onChanged: (val) {
@@ -890,11 +1085,13 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       setState(() {
                         if (isAllCurrentSelected) {
                           for (var item in filteredList) {
-                            _selectedDeleteItemKeys.remove(_getItemUniqueKey(item));
+                            _selectedDeleteItemKeys
+                                .remove(_getItemUniqueKey(item));
                           }
                         } else {
                           for (var item in filteredList) {
-                            _selectedDeleteItemKeys.add(_getItemUniqueKey(item));
+                            _selectedDeleteItemKeys
+                                .add(_getItemUniqueKey(item));
                           }
                         }
                       });
@@ -911,11 +1108,13 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                               setState(() {
                                 if (val == true) {
                                   for (var item in filteredList) {
-                                    _selectedDeleteItemKeys.add(_getItemUniqueKey(item));
+                                    _selectedDeleteItemKeys
+                                        .add(_getItemUniqueKey(item));
                                   }
                                 } else {
                                   for (var item in filteredList) {
-                                    _selectedDeleteItemKeys.remove(_getItemUniqueKey(item));
+                                    _selectedDeleteItemKeys
+                                        .remove(_getItemUniqueKey(item));
                                   }
                                 }
                               });
@@ -925,13 +1124,16 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                         const SizedBox(width: 8),
                         const Text(
                           'Centang Semua (Hapus)',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF334155)),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // Baris 2: Tombol Cetak PDF & Hapus (Bagi 2 Rata Kanan Kiri)
                   Row(
                     children: [
@@ -940,12 +1142,19 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.teal,
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                             elevation: 0,
                           ),
-                          onPressed: () => _showPrintPdfDialog(context, filteredList),
-                          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16, color: Colors.white),
-                          label: const Text('Cetak PDF', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                          onPressed: () =>
+                              _showPrintPdfDialog(context, filteredList),
+                          icon: const Icon(Icons.picture_as_pdf_rounded,
+                              size: 16, color: Colors.white),
+                          label: const Text('Cetak PDF',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -954,12 +1163,19 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.redAccent,
                             padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
                             elevation: 0,
                           ),
-                          onPressed: () => _showDeleteHistoryDialog(context, filteredList),
-                          icon: const Icon(Icons.delete_sweep_rounded, size: 16, color: Colors.white),
-                          label: const Text('Hapus', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                          onPressed: () =>
+                              _showDeleteHistoryDialog(context, filteredList),
+                          icon: const Icon(Icons.delete_sweep_rounded,
+                              size: 16, color: Colors.white),
+                          label: const Text('Hapus',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
                         ),
                       ),
                     ],
@@ -974,7 +1190,9 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   ? const Center(
                       child: Text(
                         'Belum ada riwayat penjualan pada periode berjalan.',
-                        style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            color: Color(0xFF94A3B8),
+                            fontWeight: FontWeight.w600),
                       ),
                     )
                   : ListView.builder(
@@ -982,27 +1200,39 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       itemBuilder: (context, index) {
                         final item = filteredList[index];
                         final String itemKey = _getItemUniqueKey(item);
-                        final bool isSelectedForDelete = _selectedDeleteItemKeys.contains(itemKey);
+                        final bool isSelectedForDelete =
+                            _selectedDeleteItemKeys.contains(itemKey);
 
                         final String storeName = item['name'] ?? '';
                         final String address = item['address'] ?? '';
                         final String sales = item['sales'] ?? '-';
                         final List<dynamic> muatan = item['muatan'] ?? [];
-                        final DateTime timestamp = item['timestamp'] as DateTime;
+                        final DateTime timestamp =
+                            item['timestamp'] as DateTime;
 
-                        String formattedFullDate = DateFormat('EEEE, dd MMM yyyy HH:mm', 'id').format(timestamp);
+                        String formattedFullDate =
+                            DateFormat('EEEE, dd MMM yyyy HH:mm', 'id')
+                                .format(timestamp);
 
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelectedForDelete ? Colors.red.shade50 : Colors.white,
+                            color: isSelectedForDelete
+                                ? Colors.red.shade50
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: isSelectedForDelete ? Colors.red.shade400 : const Color(0xFFE2E8F0),
+                              color: isSelectedForDelete
+                                  ? Colors.red.shade400
+                                  : const Color(0xFFE2E8F0),
                               width: isSelectedForDelete ? 2.0 : 1.5,
                             ),
                             boxShadow: [
-                              BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 3))
+                              BoxShadow(
+                                  color:
+                                      const Color(0xFF0F172A).withOpacity(0.02),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3))
                             ],
                           ),
                           child: Padding(
@@ -1011,7 +1241,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Checkbox(
                                       value: isSelectedForDelete,
@@ -1019,9 +1250,11 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                       onChanged: (bool? checked) {
                                         setState(() {
                                           if (checked == true) {
-                                            _selectedDeleteItemKeys.add(itemKey);
+                                            _selectedDeleteItemKeys
+                                                .add(itemKey);
                                           } else {
-                                            _selectedDeleteItemKeys.remove(itemKey);
+                                            _selectedDeleteItemKeys
+                                                .remove(itemKey);
                                           }
                                         });
                                       },
@@ -1032,7 +1265,9 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 15,
-                                          color: isSelectedForDelete ? Colors.red.shade900 : const Color(0xFF0F172A),
+                                          color: isSelectedForDelete
+                                              ? Colors.red.shade900
+                                              : const Color(0xFF0F172A),
                                           letterSpacing: -0.2,
                                         ),
                                         maxLines: 1,
@@ -1042,29 +1277,44 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                     Row(
                                       children: [
                                         InkWell(
-                                          onTap: () => _showTransferSalesDialog(context, item),
-                                          borderRadius: BorderRadius.circular(8),
+                                          onTap: () => _showTransferSalesDialog(
+                                              context, item),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Container(
                                             padding: const EdgeInsets.all(6),
                                             decoration: BoxDecoration(
                                               color: const Color(0xFFEFF6FF),
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(color: const Color(0xFFBFDBFE)),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color:
+                                                      const Color(0xFFBFDBFE)),
                                             ),
-                                            child: const Icon(Icons.edit_note_rounded, color: Color(0xFF2563EB), size: 18),
+                                            child: const Icon(
+                                                Icons.edit_note_rounded,
+                                                color: Color(0xFF2563EB),
+                                                size: 18),
                                           ),
                                         ),
                                         const SizedBox(width: 8),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 9, vertical: 5),
                                           decoration: BoxDecoration(
                                             color: const Color(0xFFD1FAE5),
-                                            borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: const Color(0xFFA7F3D0)),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            border: Border.all(
+                                                color: const Color(0xFFA7F3D0)),
                                           ),
                                           child: const Text(
                                             'TERKIRIM',
-                                            style: TextStyle(color: Color(0xFF047857), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                                            style: TextStyle(
+                                                color: Color(0xFF047857),
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w900,
+                                                letterSpacing: 0.5),
                                           ),
                                         ),
                                       ],
@@ -1075,59 +1325,94 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                   const SizedBox(height: 4),
                                   Text(
                                     address,
-                                    style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF64748B),
+                                        fontWeight: FontWeight.w500),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
-                                const Divider(height: 20, thickness: 1, color: Color(0xFFF1F5F9)),
-                                const Text('Detail Muatan Barang:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF475569))),
+                                const Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    color: Color(0xFFF1F5F9)),
+                                const Text('Detail Muatan Barang:',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF475569))),
                                 const SizedBox(height: 6),
                                 ...muatan.map((m) {
-                                  final int qty = (m['qty'] is int) ? m['qty'] as int : int.tryParse('${m['qty']}') ?? 0;
+                                  final int qty = (m['qty'] is int)
+                                      ? m['qty'] as int
+                                      : int.tryParse('${m['qty']}') ?? 0;
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 4.0),
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFF8FAFC),
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                                        border: Border.all(
+                                            color: const Color(0xFFE2E8F0)),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
                                             '$qty ${m['unit'] ?? 'Krt'}',
-                                            style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.orange, fontSize: 12),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w900,
+                                                color: Colors.orange,
+                                                fontSize: 12),
                                           ),
                                           const SizedBox(width: 8),
-                                          const Text('|', style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 12)),
+                                          const Text('|',
+                                              style: TextStyle(
+                                                  color: Color(0xFFCBD5E1),
+                                                  fontSize: 12)),
                                           const SizedBox(width: 8),
                                           Text(
                                             '${m['name'] ?? '-'}',
-                                            style: const TextStyle(color: Color(0xFF334155), fontSize: 12, fontWeight: FontWeight.w600),
+                                            style: const TextStyle(
+                                                color: Color(0xFF334155),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600),
                                           ),
                                         ],
                                       ),
                                     ),
                                   );
                                 }).toList(),
-                                const Divider(height: 20, thickness: 1, color: Color(0xFFF1F5F9)),
+                                const Divider(
+                                    height: 20,
+                                    thickness: 1,
+                                    color: Color(0xFFF1F5F9)),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 3),
                                       decoration: BoxDecoration(
                                         color: const Color(0xFFEFF6FF),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: Text('Sales: $sales', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF1E40AF))),
+                                      child: Text('Sales: $sales',
+                                          style: const TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w800,
+                                              color: Color(0xFF1E40AF))),
                                     ),
                                     Text(
                                       formattedFullDate,
-                                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          color: Color(0xFF64748B),
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
