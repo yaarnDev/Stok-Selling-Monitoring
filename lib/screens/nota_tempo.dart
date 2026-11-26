@@ -424,9 +424,13 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
-        title: const Text(
-          'Pencatatan Nota Tempo',
-          style: TextStyle(fontWeight: FontWeight.w800),
+        title: const FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Pencatatan Nota Tempo',
+            style: TextStyle(fontWeight: FontWeight.w800),
+          ),
         ),
         backgroundColor: const Color(0xFF0F172A),
         foregroundColor: Colors.white,
@@ -946,7 +950,7 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                 height: compact ? 1.4 : 1.45,
                 fontWeight: FontWeight.w700,
               ),
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.justify,
             ),
           ),
         ],

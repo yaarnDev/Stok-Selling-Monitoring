@@ -1004,13 +1004,17 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
-        title: const Text(
-          'History Semua Penjualan',
-          style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: 18,
-              color: Colors.white,
-              letterSpacing: -0.3),
+        title: const FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'History Semua Penjualan',
+            style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 18,
+                color: Colors.white,
+                letterSpacing: -0.3),
+          ),
         ),
         elevation: 0,
         backgroundColor: const Color(0xFF0F172A),
