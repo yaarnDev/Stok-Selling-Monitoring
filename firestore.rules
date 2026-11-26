@@ -14,6 +14,26 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
+    match /nota_tempo/{doc} {
+      // Nota tempo is used by the public operations screen.
+      allow read, write: if true;
+    }
+
+    match /history_penjualan/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /sales_profiles/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /system_config/{doc} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
     // Audit logs: only admin can read; functions write via Admin SDK
     match /stock_logs/{doc} {
       allow read: if request.auth != null;

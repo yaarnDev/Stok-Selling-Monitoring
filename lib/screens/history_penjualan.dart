@@ -18,9 +18,6 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
   String _historySearchQuery = "";
   String _selectedSalesFilter = "SEMUA";
 
-  // Set untuk menyimpan key unik item yang DICENTANG (DITANDAI UNTUK DIHAPUS)
-  final Set<String> _selectedDeleteItemKeys = {};
-
   final List<String> _salesList = [
     'SEMUA',
     'SYAKUR',
@@ -28,13 +25,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     'MULYADI',
     'LUAY',
     'INSTANSI',
-    'SHOPEE'
+    // 'SHOPEE'
   ];
-
-  // Helper pembuat key unik per transaksi
-  String _getItemUniqueKey(Map<String, dynamic> item) {
-    return "${item['source']}_${item['docId']}";
-  }
 
   // ==================== ENGINE CETAK REKAP DALAM BENTUK PDF ====================
   Future<void> _generateAndDownloadPdf(
@@ -174,9 +166,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                             text: pw.TextSpan(
                               children: [
                                 pw.TextSpan(
-                                  // text: 'Total penjualan anda di bulan ini mencapai: ',
-                                  text:
-                                      'Total penjualan anda di pertengahan bulan ini mencapai: ',
+                                  text: 'Total penjualan anda di bulan ini mencapai: ',
+                                  // text:'Total penjualan anda di pertengahan bulan ini mencapai: ',
                                   style: pw.TextStyle(
                                       fontSize: 9.5, color: PdfColors.white),
                                 ),
@@ -193,8 +184,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           ),
                           pw.SizedBox(height: 3),
                           pw.Text(
-                            //'Ayo tingkatkan lagi penjualanmu di bulan depan!',//
-                            'Bulan belum habis, target jangan ikut pasrah. Semangat kejar targetnya ya kids!',
+                            'Ayo tingkatkan lagi penjualanmu di bulan depan!',//
+                            // 'Bulan belum habis, target jangan ikut pasrah. Semangat kejar targetnya ya kids!',
                             style: pw.TextStyle(
                               fontSize: 8.5,
                               fontStyle: pw.FontStyle.italic,
@@ -382,34 +373,26 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     );
   }
 
-  // ==================== DIALOG HAPUS HISTORY (SUPER CEPAT DENGAN FIRESTORE BATCH) ====================
   void _showDeleteHistoryDialog(
-      BuildContext context, List<Map<String, dynamic>> currentFilteredList) {
-    if (currentFilteredList.isEmpty) {
+      BuildContext context, Map<String, dynamic> item) {
+    final docId = item['docId']?.toString() ?? '';
+    final source = item['source']?.toString() ?? '';
+    if (docId.isEmpty ||
+        (source != 'history_penjualan' && source != 'stores')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Tidak ada data riwayat untuk dihapus!'),
-            backgroundColor: Colors.orange),
+          content: Text('Data riwayat tidak valid dan tidak dapat dihapus.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
+    final storeName = item['name']?.toString() ?? 'Toko';
+    final isStoredTransaction = source == 'stores';
     final passwordController = TextEditingController();
-    int deleteCount = currentFilteredList
-        .where(
-            (item) => _selectedDeleteItemKeys.contains(_getItemUniqueKey(item)))
-        .length;
 
-    if (deleteCount == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Pilih/centang minimal 1 toko yang mau dihapus!'),
-            backgroundColor: Colors.orange),
-      );
-      return;
-    }
-
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) {
         return AlertDialog(
@@ -431,20 +414,18 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Kategori Filter: $_selectedSalesFilter',
+                storeName,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                     color: Colors.blueAccent),
               ),
               const SizedBox(height: 8),
-              Text('• Jumlah Toko Dicentang: $deleteCount Toko',
-                  style: const TextStyle(
-                      color: Colors.red, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              const Text(
-                'Toko yang dicentang akan dihapus permanen dari riwayat!',
-                style: TextStyle(
+              Text(
+                isStoredTransaction
+                    ? 'Transaksi ini akan dikembalikan ke status PENDING dan muatannya dikosongkan.'
+                    : 'Riwayat transaksi ini akan dihapus permanen.',
+                style: const TextStyle(
                     fontSize: 11,
                     color: Colors.redAccent,
                     fontStyle: FontStyle.italic),
@@ -489,68 +470,50 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                   );
 
                   try {
-                    // GUANAKAN BATCH UNTUK EKSEKUSI MASSAL DALAM 1 REQUEST
                     final batch = FirebaseFirestore.instance.batch();
-                    int deletedItemsCount = 0;
-
-                    for (var item in currentFilteredList) {
-                      String itemKey = _getItemUniqueKey(item);
-
-                      if (_selectedDeleteItemKeys.contains(itemKey)) {
-                        String docId = item['docId'] ?? '';
-                        String source = item['source'] ?? '';
-
-                        if (docId.isNotEmpty) {
-                          if (source == 'history_penjualan') {
-                            final ref = FirebaseFirestore.instance
-                                .collection('history_penjualan')
-                                .doc(docId);
-                            batch.delete(ref);
-                          } else if (source == 'stores') {
-                            final ref = FirebaseFirestore.instance
-                                .collection('stores')
-                                .doc(docId);
-                            batch.update(ref, {
-                              'status': 'PENDING',
-                              'muatan': [],
-                            });
-                          }
-                          deletedItemsCount++;
-                        }
-                      }
+                    if (isStoredTransaction) {
+                      batch.update(
+                        FirebaseFirestore.instance
+                            .collection('stores')
+                            .doc(docId),
+                        {
+                          'status': 'PENDING',
+                          'muatan': [],
+                        },
+                      );
+                    } else {
+                      batch.delete(
+                        FirebaseFirestore.instance
+                            .collection('history_penjualan')
+                            .doc(docId),
+                      );
                     }
-
-                    // KIRIM SEMUA PERINTAH HAPUS SEKALIGUS
-                    if (deletedItemsCount > 0) {
-                      await batch.commit();
-                    }
-
-                    setState(() {
-                      _selectedDeleteItemKeys.clear();
-                    });
+                    await batch.commit();
 
                     if (context.mounted) {
-                      Navigator.pop(context); // Tutup loading dialog
                       Provider.of<AdminProvider>(context, listen: false)
                           .startListening();
-
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              '⚡ Berhasil menghapus $deletedItemsCount riwayat sekaligus!'),
+                          SnackBar(
+                            content: Text(isStoredTransaction
+                                ? 'Transaksi $storeName dikembalikan ke PENDING.'
+                                : 'Riwayat $storeName berhasil dihapus.'),
                           backgroundColor: Colors.green,
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
                     }
-                  } catch (e) {
+                  } on FirebaseException catch (e) {
                     if (context.mounted) {
-                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                             content: Text('Gagal menghapus history: $e'),
                             backgroundColor: Colors.red),
                       );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      Navigator.pop(context);
                     }
                   }
                 } else {
@@ -568,7 +531,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
           ],
         );
       },
-    );
+    ).whenComplete(passwordController.dispose);
   }
 
   // ==================== DIALOG CETAK PDF WITH ADMIN AUTH ====================
@@ -680,7 +643,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       'MULYADI',
       'LUAY',
       'INSTANSI',
-      'SHOPEE'
+      // 'SHOPEE'
     ];
 
     showDialog(
@@ -858,6 +821,96 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
     );
   }
 
+  Widget _buildHistorySearchField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        onChanged: (value) {
+          setState(() {
+            _historySearchQuery = value.trim().toLowerCase();
+          });
+        },
+        decoration: InputDecoration(
+          hintText: 'Cari nama toko atau resi...',
+          hintStyle:
+              const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: Color(0xFF2563EB),
+            size: 20,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSalesFilter() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: _selectedSalesFilter,
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        items: _salesList.map((sales) {
+          return DropdownMenuItem(
+            value: sales,
+            child: Text(
+              sales,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A),
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (value) {
+          if (value != null) {
+            setState(() {
+              _selectedSalesFilter = value;
+            });
+          }
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AdminProvider>(context);
@@ -910,7 +963,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
     for (var store in provider.stores) {
       if (store.status.toUpperCase() == 'TERKIRIM') {
-        DateTime waktuToko = store.createdAt ?? sekarang;
+        DateTime waktuToko =
+            store.deliveredAt ?? store.createdAt ?? sekarang;
         if (waktuToko.isAfter(awalPeriode) ||
             waktuToko.isAtSameMomentAs(awalPeriode)) {
           gabunganHistory.add({
@@ -946,10 +1000,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
       return timeB.compareTo(timeA);
     });
 
-    bool isAllCurrentSelected = filteredList.isNotEmpty &&
-        filteredList.every((item) =>
-            _selectedDeleteItemKeys.contains(_getItemUniqueKey(item)));
-
+    final isMobile = MediaQuery.of(context).size.width < 600;
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
       appBar: AppBar(
@@ -958,251 +1009,72 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
           style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 18,
-              color: Color(0xFF0F172A),
+              color: Colors.white,
               letterSpacing: -0.3),
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF0F172A),
+        backgroundColor: const Color(0xFF0F172A),
+        foregroundColor: Colors.white,
         centerTitle: false,
+        actions: [
+          IconButton(
+            tooltip: 'Cetak PDF',
+            onPressed: () => _showPrintPdfDialog(context, filteredList),
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(isMobile ? 12 : 24),
         child: Column(
           children: [
-            // Filter Pencarian & Dropdown
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: const Color(0xFF0F172A).withOpacity(0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2))
-                      ],
-                    ),
-                    child: TextField(
-                      style: const TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.w500),
-                      onChanged: (value) {
-                        setState(() {
-                          _historySearchQuery = value.trim().toLowerCase();
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Cari nama toko atau resi...',
-                        hintStyle: const TextStyle(
-                            color: Color(0xFF94A3B8), fontSize: 13),
-                        prefixIcon: const Icon(Icons.search_rounded,
-                            color: Color(0xFF2563EB), size: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: const Color(0xFF0F172A).withOpacity(0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2))
-                      ],
-                    ),
-                    child: DropdownButtonFormField<String>(
-                      value: _selectedSalesFilter,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE2E8F0)),
-                        ),
-                      ),
-                      items: _salesList.map((sales) {
-                        return DropdownMenuItem(
-                          value: sales,
-                          child: Text(sales,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF0F172A))),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedSalesFilter = val;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // BARIS CONTROL FITUR: RESPONSIF MOBILE (ANTI OVERFLOW)
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Column(
-                children: [
-                  // Baris 1: Checkbox Centang Semua
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        if (isAllCurrentSelected) {
-                          for (var item in filteredList) {
-                            _selectedDeleteItemKeys
-                                .remove(_getItemUniqueKey(item));
-                          }
-                        } else {
-                          for (var item in filteredList) {
-                            _selectedDeleteItemKeys
-                                .add(_getItemUniqueKey(item));
-                          }
-                        }
-                      });
-                    },
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: Checkbox(
-                            value: isAllCurrentSelected,
-                            activeColor: Colors.red,
-                            onChanged: (val) {
-                              setState(() {
-                                if (val == true) {
-                                  for (var item in filteredList) {
-                                    _selectedDeleteItemKeys
-                                        .add(_getItemUniqueKey(item));
-                                  }
-                                } else {
-                                  for (var item in filteredList) {
-                                    _selectedDeleteItemKeys
-                                        .remove(_getItemUniqueKey(item));
-                                  }
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Centang Semua (Hapus)',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF334155)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Baris 2: Tombol Cetak PDF & Hapus (Bagi 2 Rata Kanan Kiri)
-                  Row(
+            isMobile
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildHistorySearchField(),
+                      const SizedBox(height: 10),
+                      _buildSalesFilter(),
+                    ],
+                  )
+                : Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                            elevation: 0,
-                          ),
-                          onPressed: () =>
-                              _showPrintPdfDialog(context, filteredList),
-                          icon: const Icon(Icons.picture_as_pdf_rounded,
-                              size: 16, color: Colors.white),
-                          label: const Text('Cetak PDF',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
-                        ),
+                        flex: 2,
+                        child: _buildHistorySearchField(),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                            elevation: 0,
-                          ),
-                          onPressed: () =>
-                              _showDeleteHistoryDialog(context, filteredList),
-                          icon: const Icon(Icons.delete_sweep_rounded,
-                              size: 16, color: Colors.white),
-                          label: const Text('Hapus',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
-                        ),
-                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: _buildSalesFilter()),
                     ],
                   ),
-                ],
-              ),
-            ),
             const SizedBox(height: 12),
-
             Expanded(
               child: filteredList.isEmpty
                   ? const Center(
-                      child: Text(
-                        'Belum ada riwayat penjualan pada periode berjalan.',
-                        style: TextStyle(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.receipt_long_outlined,
+                            size: 48,
                             color: Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Belum ada riwayat penjualan pada periode berjalan.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF64748B),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   : ListView.builder(
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
                         final item = filteredList[index];
-                        final String itemKey = _getItemUniqueKey(item);
-                        final bool isSelectedForDelete =
-                            _selectedDeleteItemKeys.contains(itemKey);
-
                         final String storeName = item['name'] ?? '';
                         final String address = item['address'] ?? '';
                         final String sales = item['sales'] ?? '-';
@@ -1217,15 +1089,11 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelectedForDelete
-                                ? Colors.red.shade50
-                                : Colors.white,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: isSelectedForDelete
-                                  ? Colors.red.shade400
-                                  : const Color(0xFFE2E8F0),
-                              width: isSelectedForDelete ? 2.0 : 1.5,
+                              color: const Color(0xFFE2E8F0),
+                              width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -1244,30 +1112,13 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Checkbox(
-                                      value: isSelectedForDelete,
-                                      activeColor: Colors.red,
-                                      onChanged: (bool? checked) {
-                                        setState(() {
-                                          if (checked == true) {
-                                            _selectedDeleteItemKeys
-                                                .add(itemKey);
-                                          } else {
-                                            _selectedDeleteItemKeys
-                                                .remove(itemKey);
-                                          }
-                                        });
-                                      },
-                                    ),
                                     Expanded(
                                       child: Text(
                                         storeName,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.w900,
                                           fontSize: 15,
-                                          color: isSelectedForDelete
-                                              ? Colors.red.shade900
-                                              : const Color(0xFF0F172A),
+                                          color: Color(0xFF0F172A),
                                           letterSpacing: -0.2,
                                         ),
                                         maxLines: 1,
@@ -1295,6 +1146,33 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                                                 Icons.edit_note_rounded,
                                                 color: Color(0xFF2563EB),
                                                 size: 18),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Tooltip(
+                                          message: 'Hapus riwayat',
+                                          child: InkWell(
+                                            onTap: () =>
+                                                _showDeleteHistoryDialog(
+                                                    context, item),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Container(
+                                              padding: const EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFFEF2F2),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                    color: const Color(
+                                                        0xFFFECACA)),
+                                              ),
+                                              child: const Icon(
+                                                Icons.delete_outline_rounded,
+                                                color: Color(0xFFDC2626),
+                                                size: 18,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(width: 8),

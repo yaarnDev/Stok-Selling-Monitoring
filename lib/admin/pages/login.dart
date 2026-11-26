@@ -102,7 +102,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                 
                 // 🛠️ TEKS EASTER EGG ELEGAN (TIDAK ALAY)
                 const Text(
-                  '"Hanya admin ganteng yang bisa login 😉"', 
+                  '"Hanya admin ganteng yang bisa login😉"', 
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600, fontStyle: FontStyle.italic)
                 ),

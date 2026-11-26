@@ -42,6 +42,7 @@ class Store {
   final String status;
   final List<dynamic> muatan;
   final DateTime? createdAt;
+  final DateTime? deliveredAt;
 
   Store({
     required this.id,
@@ -51,6 +52,7 @@ class Store {
     required this.status,
     required this.muatan,
     this.createdAt,
+    this.deliveredAt,
   });
 
   factory Store.fromDoc(DocumentSnapshot doc) {
@@ -66,6 +68,10 @@ class Store {
     if (data['createdAt'] is Timestamp) {
       createdTime = (data['createdAt'] as Timestamp).toDate();
     }
+    DateTime? deliveredTime;
+    if (data['deliveredAt'] is Timestamp) {
+      deliveredTime = (data['deliveredAt'] as Timestamp).toDate();
+    }
 
     return Store(
       id: doc.id,
@@ -75,6 +81,7 @@ class Store {
       status: statusValue,
       muatan: muatanList,
       createdAt: createdTime,
+      deliveredAt: deliveredTime,
     );
   }
 }
@@ -325,12 +332,18 @@ class AdminProvider extends ChangeNotifier {
 
       if (statusValue == 'TERKIRIM') {
         if (muatanList.isNotEmpty) {
+          final Timestamp historyTimestamp =
+              data['deliveredAt'] is Timestamp
+                  ? data['deliveredAt'] as Timestamp
+                  : data['createdAt'] is Timestamp
+                      ? data['createdAt'] as Timestamp
+                      : Timestamp.now();
           final historyRef = _db.collection('history_penjualan').doc();
           batch.set(historyRef, {
             'storeId': doc.id,
             'sales': salesName.trim().toUpperCase(),
             'muatan': muatanList,
-            'timestamp': FieldValue.serverTimestamp(),
+            'timestamp': historyTimestamp,
             'storeName': data['name'] ?? '',
             'address': data['address'] ?? '',
           });
@@ -462,13 +475,13 @@ class AdminProvider extends ChangeNotifier {
     for (var store in _stores) {
       if (store.sales.trim().toUpperCase() == salesName.trim().toUpperCase() &&
           store.status.toUpperCase() == 'TERKIRIM') {
-        DateTime waktuToko = store.createdAt ?? sekarang;
+        DateTime waktuToko =
+            store.deliveredAt ?? store.createdAt ?? sekarang;
 
         if (waktuToko.isAfter(awalPeriode) ||
             waktuToko.isAtSameMomentAs(awalPeriode)) {
           if (_waktuResetBulananTerakhir != null &&
-              store.createdAt != null &&
-              store.createdAt!.isBefore(_waktuResetBulananTerakhir!)) {
+              waktuToko.isBefore(_waktuResetBulananTerakhir!)) {
             continue;
           }
 

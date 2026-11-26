@@ -424,7 +424,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                 Padding(padding: EdgeInsets.all(10), child: Text('TOTAL OMSET (KRT)', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87))),
                               ],
                             ),
-                            ...listSales.map((sales) {
+                            ...listSales.where((sales) => sales != 'SHOPEE').map((sales) {
                               int totalKarton = 0;
                               final tokoSalesTerkirim = prov.stores.where((store) {
                                 return store.sales.toUpperCase() == sales.toUpperCase() && 

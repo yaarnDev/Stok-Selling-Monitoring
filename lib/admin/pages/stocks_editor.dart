@@ -12,7 +12,6 @@ class StocksEditorPage extends StatelessWidget {
     final qtyCtrl = TextEditingController();
     final unitCtrl = TextEditingController(text: 'karton');
     final provider = Provider.of<AdminProvider>(context, listen: false);
-
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:convert'; // Wajib untuk base64Decode
 import 'package:flutter/foundation.dart'; // Wajib import untuk kIsWeb dan Uint8List
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart'; // Import Wajib Image Picker
 import '../admin/providers/admin_provider.dart';
 import 'history_penjualan.dart'; // Pastikan import file history baru ke sini
+import 'nota_tempo.dart';
 
 class AudienceHomeScreen extends StatefulWidget {
   const AudienceHomeScreen({super.key});
@@ -30,7 +30,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
     {'name': 'MULYADI', 'icon': Icons.badge_outlined, 'avatar': 'MU'},
     {'name': 'LUAY', 'icon': Icons.badge_outlined, 'avatar': 'LU'},
     {'name': 'INSTANSI', 'icon': Icons.business_outlined, 'avatar': 'IN'},
-    {'name': 'SHOPEE', 'icon': Icons.shopping_bag_outlined, 'avatar': 'SH'},
+    // {'name': 'SHOPEE', 'icon': Icons.shopping_bag_outlined, 'avatar': 'SH'},
   ];
 
   @override
@@ -392,6 +392,20 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                           Row(
                             children: [
                               IconButton(
+                                tooltip: 'Pencatatan Nota Tempo',
+                                icon: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
+                                  child: const Icon(Icons.receipt_long_rounded, color: Color(0xFF60A5FA), size: 18),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const NotaTempoPage()),
+                                  );
+                                },
+                              ),
+                              IconButton(
                                 tooltip: 'History Penjualan Semua Toko',
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
@@ -498,6 +512,17 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                       ),
                       Row(
                         children: [
+                          IconButton(
+                            tooltip: 'Pencatatan Nota Tempo',
+                            icon: const Icon(Icons.receipt_long_rounded, color: Colors.white70, size: 22),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const NotaTempoPage()),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 8),
                           IconButton(
                             tooltip: 'History Penjualan Semua Toko',
                             icon: const Icon(Icons.history_rounded, color: Colors.white70, size: 22),
