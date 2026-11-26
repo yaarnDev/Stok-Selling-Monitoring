@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E88E5)),
+        fontFamily: 'Roboto',
         useMaterial3: true,
       ),
       home: const AudienceHomeScreen(), // Membuka halaman pantau stok mewah kita

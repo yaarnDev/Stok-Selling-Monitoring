@@ -360,43 +360,76 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                 ? Column( 
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF3B82F6).withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3))
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF3B82F6)
+                                        .withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: const Color(0xFF3B82F6)
+                                          .withOpacity(0.3),
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.insights_rounded,
+                                    color: Color(0xFF60A5FA),
+                                    size: 20,
+                                  ),
                                 ),
-                                child: const Icon(Icons.insights_rounded, color: Color(0xFF60A5FA), size: 20),
-                              ),
-                              const SizedBox(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
-                                    'Monitoring & Selling', 
-                                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: -0.3)
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Monitoring & Selling',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: -0.3,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Realtime Operations Dashboard',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Color(0xFF94A3B8),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    'Realtime Operations Dashboard', 
-                                    style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10, fontWeight: FontWeight.w500)
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: 4),
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
                                 tooltip: 'Pencatatan Nota Tempo',
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
                                 icon: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.receipt_long_rounded, color: Color(0xFF60A5FA), size: 18),
+                                  child: const Icon(Icons.receipt_long_rounded, color: Color(0xFF60A5FA), size: 17),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
@@ -407,10 +440,16 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               ),
                               IconButton(
                                 tooltip: 'History Penjualan Semua Toko',
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
                                 icon: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.history_rounded, color: Color(0xFF60A5FA), size: 18),
+                                  child: const Icon(Icons.history_rounded, color: Color(0xFF60A5FA), size: 17),
                                 ),
                                 onPressed: () {
                                   Navigator.push(
@@ -421,11 +460,17 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               ),
                               IconButton(
                                 tooltip: 'Admin Panel',
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                padding: EdgeInsets.zero,
+                                visualDensity: VisualDensity.compact,
                                 onPressed: () => Navigator.pushNamed(context, '/admin'),
                                 icon: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: const EdgeInsets.all(5),
                                   decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 18),
+                                  child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 17),
                                 ),
                               ),
                             ],
