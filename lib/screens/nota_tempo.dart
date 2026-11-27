@@ -508,17 +508,21 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                           const SizedBox(height: 12),
                           SizedBox(
                             height: 92,
+                            child: _summaryCard(
+                              'Piutang Aktif',
+                              '$outstandingCount nota',
+                              currency.format(outstandingAmount),
+                              const Color(0xFFD97706),
+                              Icons.pending_actions_rounded,
+                              mobile: true,
+                              width: MediaQuery.of(context).size.width - 24,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: 92,
                             child: Row(
                               children: [
-                                _summaryCard(
-                                  'Piutang Aktif',
-                                  '$outstandingCount nota',
-                                  currency.format(outstandingAmount),
-                                  const Color(0xFFD97706),
-                                  Icons.pending_actions_rounded,
-                                  mobile: true,
-                                ),
-                                const SizedBox(width: 10),
                                 _summaryCard(
                                   'Jatuh Tempo',
                                   '$overdueCount nota',
@@ -830,12 +834,12 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
 
   Widget _summaryCard(
       String title, String subtitle, String value, Color color, IconData icon,
-      {required bool mobile}) {
+      {required bool mobile, double? width}) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = mobile ? (screenWidth - 24 - 20) / 3 : 148.0;
+    final cardWidth = width ?? (mobile ? (screenWidth - 24 - 10) / 2 : 148.0);
     return Container(
       width: cardWidth,
-      padding: EdgeInsets.all(mobile ? 7 : 12),
+      padding: EdgeInsets.all(mobile ? 9 : 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(mobile ? 12 : 16),
@@ -863,15 +867,15 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: mobile ? 12 : 13, color: color),
-                SizedBox(width: mobile ? 3 : 5),
+                Icon(icon, size: mobile ? 14 : 13, color: color),
+                SizedBox(width: mobile ? 4 : 5),
                 Flexible(
                   child: Text(
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: mobile ? 8 : 9,
+                      fontSize: mobile ? 10 : 9,
                       fontWeight: FontWeight.w800,
                       color: color,
                     ),
@@ -886,7 +890,7 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: mobile ? 11 : 13,
+              fontSize: 13,
               fontWeight: FontWeight.w900,
               color: color,
             ),
@@ -896,9 +900,9 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 9,
-              color: Color(0xFF94A3B8),
+            style: TextStyle(
+              fontSize: mobile ? 11 : 9,
+              color: const Color(0xFF94A3B8),
               fontWeight: FontWeight.w600,
             ),
           ),

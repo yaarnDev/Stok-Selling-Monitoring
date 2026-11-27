@@ -166,7 +166,8 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                             text: pw.TextSpan(
                               children: [
                                 pw.TextSpan(
-                                  text: 'Total penjualan anda di bulan ini mencapai: ',
+                                  text:
+                                      'Total penjualan anda di bulan ini mencapai: ',
                                   // text:'Total penjualan anda di pertengahan bulan ini mencapai: ',
                                   style: pw.TextStyle(
                                       fontSize: 9.5, color: PdfColors.white),
@@ -184,7 +185,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                           ),
                           pw.SizedBox(height: 3),
                           pw.Text(
-                            'Ayo tingkatkan lagi penjualanmu di bulan depan!',//
+                            'Ayo tingkatkan lagi penjualanmu di bulan depan!', //
                             // 'Bulan belum habis, target jangan ikut pasrah. Semangat kejar targetnya ya kids!',
                             style: pw.TextStyle(
                               fontSize: 8.5,
@@ -402,11 +403,16 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
             children: [
               Icon(Icons.delete_sweep_rounded, color: Colors.redAccent),
               SizedBox(width: 8),
-              Text('Konfirmasi Hapus History',
+              Expanded(
+                child: Text(
+                  'Konfirmasi Hapus History',
                   style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF0F172A))),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF0F172A),
+                  ),
+                ),
+              ),
             ],
           ),
           content: Column(
@@ -494,10 +500,10 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
                       Provider.of<AdminProvider>(context, listen: false)
                           .startListening();
                       ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(isStoredTransaction
-                                ? 'Transaksi $storeName dikembalikan ke PENDING.'
-                                : 'Riwayat $storeName berhasil dihapus.'),
+                        SnackBar(
+                          content: Text(isStoredTransaction
+                              ? 'Transaksi $storeName dikembalikan ke PENDING.'
+                              : 'Riwayat $storeName berhasil dihapus.'),
                           backgroundColor: Colors.green,
                           behavior: SnackBarBehavior.floating,
                         ),
@@ -843,8 +849,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
         },
         decoration: InputDecoration(
           hintText: 'Cari nama toko atau resi...',
-          hintStyle:
-              const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+          hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: Color(0xFF2563EB),
@@ -963,8 +968,7 @@ class _AllSalesHistoryPageState extends State<AllSalesHistoryPage> {
 
     for (var store in provider.stores) {
       if (store.status.toUpperCase() == 'TERKIRIM') {
-        DateTime waktuToko =
-            store.deliveredAt ?? store.createdAt ?? sekarang;
+        DateTime waktuToko = store.deliveredAt ?? store.createdAt ?? sekarang;
         if (waktuToko.isAfter(awalPeriode) ||
             waktuToko.isAtSameMomentAs(awalPeriode)) {
           gabunganHistory.add({

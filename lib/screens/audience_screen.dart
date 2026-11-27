@@ -17,12 +17,13 @@ class AudienceHomeScreen extends StatefulWidget {
   State<AudienceHomeScreen> createState() => _AudienceHomeScreenState();
 }
 
-class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTickerProviderStateMixin {
+class _AudienceHomeScreenState extends State<AudienceHomeScreen>
+    with SingleTickerProviderStateMixin {
   bool _hasStartedListening = false;
   String _searchQuery = "";
-  
+
   late TabController _tabController;
-  String _currentTabSalesName = "SYAKUR"; 
+  String _currentTabSalesName = "SYAKUR";
 
   final List<Map<String, dynamic>> salesCategories = [
     {'name': 'SYAKUR', 'icon': Icons.badge_outlined, 'avatar': 'SY'},
@@ -37,11 +38,12 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
   void initState() {
     super.initState();
     _tabController = TabController(length: salesCategories.length, vsync: this);
-    
+
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
         setState(() {
-          _currentTabSalesName = salesCategories[_tabController.index]['name'] as String;
+          _currentTabSalesName =
+              salesCategories[_tabController.index]['name'] as String;
         });
       }
     });
@@ -68,10 +70,13 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
   }
 
   // DIALOG MODEL WA: Preview Profil Besar
-  void _showWAProfilePreviewDialog(BuildContext context, String salesName, String? base64String) {
-    final String initial = salesName.length >= 2 ? salesName.substring(0, 2).toUpperCase() : salesName.toUpperCase();
+  void _showWAProfilePreviewDialog(
+      BuildContext context, String salesName, String? base64String) {
+    final String initial = salesName.length >= 2
+        ? salesName.substring(0, 2).toUpperCase()
+        : salesName.toUpperCase();
     Uint8List? decodedBytes;
-    
+
     if (base64String != null && base64String.isNotEmpty) {
       try {
         decodedBytes = base64Decode(base64String);
@@ -82,7 +87,8 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
       context: context,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           backgroundColor: Colors.white,
           elevation: 6,
           child: Container(
@@ -96,16 +102,20 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                   children: [
                     Text(
                       'Profil $salesName',
-                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1E293B), letterSpacing: -0.3),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          color: Color(0xFF1E293B),
+                          letterSpacing: -0.3),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: Color(0xFF64748B)),
+                      icon: const Icon(Icons.close_rounded,
+                          color: Color(0xFF64748B)),
                       onPressed: () => Navigator.pop(context),
                     )
                   ],
                 ),
                 const SizedBox(height: 16),
-                
                 Stack(
                   alignment: Alignment.bottomRight,
                   children: [
@@ -115,7 +125,8 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: const Color(0xFFF1F5F9),
-                        border: Border.all(color: const Color(0xFF3B82F6), width: 3),
+                        border: Border.all(
+                            color: const Color(0xFF3B82F6), width: 3),
                         boxShadow: [
                           BoxShadow(
                             color: const Color(0xFF3B82F6).withOpacity(0.15),
@@ -133,33 +144,34 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                       child: decodedBytes != null
                           ? null
                           : Center(
-                              child: Text(
-                                initial, 
-                                style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: Color(0xFF2563EB))
-                              ),
+                              child: Text(initial,
+                                  style: const TextStyle(
+                                      fontSize: 44,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF2563EB))),
                             ),
                     ),
                     if (salesName != 'INSTANSI' && salesName != 'SHOPEE')
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context); 
-                          _showEditAvatarProcess(context, salesName); 
+                          Navigator.pop(context);
+                          _showEditAvatarProcess(context, salesName);
                         },
                         child: Container(
                           padding: const EdgeInsets.all(9),
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF2563EB),
-                            border: Border.all(color: Colors.white, width: 2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.blue.withOpacity(0.3),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              )
-                            ]
-                          ),
-                          child: const Icon(Icons.edit_rounded, color: Colors.white, size: 16),
+                              shape: BoxShape.circle,
+                              color: const Color(0xFF2563EB),
+                              border: Border.all(color: Colors.white, width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.3),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                )
+                              ]),
+                          child: const Icon(Icons.edit_rounded,
+                              color: Colors.white, size: 16),
                         ),
                       ),
                   ],
@@ -167,18 +179,25 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                 const SizedBox(height: 20),
                 Text(
                   salesName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)), // BOLD NAMA SALES
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF0F172A)), // BOLD NAMA SALES
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEFF6FF),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
                     'Hak Akses Terbimbing (Admin)',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF2563EB), fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF2563EB),
+                        fontWeight: FontWeight.w700),
                   ),
                 ),
               ],
@@ -193,143 +212,168 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
   void _showEditAvatarProcess(BuildContext context, String salesName) {
     final provider = Provider.of<AdminProvider>(context, listen: false);
     final passwordController = TextEditingController();
-    
+
     XFile? pickedXFile;
     Uint8List? selectedImageBytes;
 
     showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              title: Text('Edit Foto $salesName', style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Masukkan password admin untuk memvalidasi identitas hak akses.', style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                    const SizedBox(height: 14),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Password Admin',
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        isDense: true,
-                        prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18),
-                      ),
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text('Edit Foto $salesName',
+                style: const TextStyle(
+                    fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                      'Masukkan password admin untuk memvalidasi identitas hak akses.',
+                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Password Admin',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      isDense: true,
+                      prefixIcon:
+                          const Icon(Icons.lock_outline_rounded, size: 18),
                     ),
-                    const SizedBox(height: 16),
-                    
-                    if (selectedImageBytes != null)
-                      Container(
-                        width: 90,
-                        height: 90,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF2563EB), width: 2),
-                          image: DecorationImage(
-                            image: MemoryImage(selectedImageBytes!), 
-                            fit: BoxFit.cover
-                          )
-                        ),
-                      ),
-                    
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        side: const BorderSide(color: Color(0xFFCBD5E1)),
-                      ),
-                      icon: const Icon(Icons.photo_library_rounded, size: 18, color: Color(0xFF2563EB)),
-                      label: Text(selectedImageBytes == null ? 'Pilih Gambar Baru' : 'Ganti Gambar Pilihan', style: const TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w600)),
-                      onPressed: () async {
-                        final ImagePicker picker = ImagePicker();
-                        final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
-                        
-                        if (pickedFile != null) {
-                          final bytes = await pickedFile.readAsBytes();
-                          setDialogState(() {
-                            pickedXFile = pickedFile;
-                            selectedImageBytes = bytes;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Batal', style: TextStyle(color: Color(0xFF64748B))),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2563EB),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    elevation: 0,
                   ),
-                  onPressed: () async {
-                    if (passwordController.text.trim() == "admin123") {
-                      if (pickedXFile != null && selectedImageBytes != null) {
-                        Navigator.pop(context); 
-                        
-                        BuildContext? loadingContext;
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext lContext) {
-                            loadingContext = lContext;
-                            return const Center(child: CircularProgressIndicator());
-                          },
-                        );
+                  const SizedBox(height: 16),
+                  if (selectedImageBytes != null)
+                    Container(
+                      width: 90,
+                      height: 90,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: const Color(0xFF2563EB), width: 2),
+                          image: DecorationImage(
+                              image: MemoryImage(selectedImageBytes!),
+                              fit: BoxFit.cover)),
+                    ),
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      side: const BorderSide(color: Color(0xFFCBD5E1)),
+                    ),
+                    icon: const Icon(Icons.photo_library_rounded,
+                        size: 18, color: Color(0xFF2563EB)),
+                    label: Text(
+                        selectedImageBytes == null
+                            ? 'Pilih Gambar Baru'
+                            : 'Ganti Gambar Pilihan',
+                        style: const TextStyle(
+                            color: Color(0xFF0F172A),
+                            fontWeight: FontWeight.w600)),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      final XFile? pickedFile = await picker.pickImage(
+                          source: ImageSource.gallery, imageQuality: 50);
 
-                        try {
-                          await provider.uploadAndUpdateSalesAvatarCrossPlatform(
-                            salesName, 
-                            pickedXFile!, 
-                            selectedImageBytes!
-                          );
-                          
-                          if (loadingContext != null && Navigator.canPop(loadingContext!)) {
-                            Navigator.pop(loadingContext!);
-                          }
-                          
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Foto profil $salesName sukses diperbarui!'), behavior: SnackBarBehavior.floating),
-                            );
-                          }
-                        } catch (e) {
-                          if (loadingContext != null && Navigator.canPop(loadingContext!)) {
-                            Navigator.pop(loadingContext!);
-                          }
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Gagal: $e'), backgroundColor: Colors.red),
-                            );
-                          }
+                      if (pickedFile != null) {
+                        final bytes = await pickedFile.readAsBytes();
+                        setDialogState(() {
+                          pickedXFile = pickedFile;
+                          selectedImageBytes = bytes;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Batal',
+                    style: TextStyle(color: Color(0xFF64748B))),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                ),
+                onPressed: () async {
+                  if (passwordController.text.trim() == "admin123") {
+                    if (pickedXFile != null && selectedImageBytes != null) {
+                      Navigator.pop(context);
+
+                      BuildContext? loadingContext;
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext lContext) {
+                          loadingContext = lContext;
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                      );
+
+                      try {
+                        await provider.uploadAndUpdateSalesAvatarCrossPlatform(
+                            salesName, pickedXFile!, selectedImageBytes!);
+
+                        if (loadingContext != null &&
+                            Navigator.canPop(loadingContext!)) {
+                          Navigator.pop(loadingContext!);
                         }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Silakan pilih file gambar terlebih dahulu!'), backgroundColor: Colors.orange),
-                        );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    'Foto profil $salesName sukses diperbarui!'),
+                                behavior: SnackBarBehavior.floating),
+                          );
+                        }
+                      } catch (e) {
+                        if (loadingContext != null &&
+                            Navigator.canPop(loadingContext!)) {
+                          Navigator.pop(loadingContext!);
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Gagal: $e'),
+                                backgroundColor: Colors.red),
+                          );
+                        }
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Akses Ditolak! Password Admin Salah.'), backgroundColor: Colors.red),
+                        const SnackBar(
+                            content: Text(
+                                'Silakan pilih file gambar terlebih dahulu!'),
+                            backgroundColor: Colors.orange),
                       );
                     }
-                  },
-                  child: const Text('Mulai Upload', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            );
-          }
-        );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Akses Ditolak! Password Admin Salah.'),
+                          backgroundColor: Colors.red),
+                    );
+                  }
+                },
+                child: const Text('Mulai Upload',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        });
       },
     );
   }
@@ -340,7 +384,7 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
     final bool isMobile = screenWidth < 650;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F5F9), 
+      backgroundColor: const Color(0xFFF1F5F9),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -348,306 +392,371 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF0F172A)], 
+                colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 28, vertical: 16),
+            padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 16 : 28, vertical: 16),
             child: SafeArea(
               bottom: false,
-              child: isMobile 
-                ? Column( 
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF3B82F6)
-                                        .withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
+              child: isMobile
+                  ? Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
                                       color: const Color(0xFF3B82F6)
-                                          .withOpacity(0.3),
+                                          .withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: const Color(0xFF3B82F6)
+                                            .withOpacity(0.3),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.insights_rounded,
+                                      color: Color(0xFF60A5FA),
+                                      size: 20,
                                     ),
                                   ),
-                                  child: const Icon(
-                                    Icons.insights_rounded,
-                                    color: Color(0xFF60A5FA),
-                                    size: 20,
+                                  const SizedBox(width: 8),
+                                  const Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Monitoring & Selling',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: -0.3,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Realtime Operations Dashboard',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color: Color(0xFF94A3B8),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  tooltip: 'Pencatatan Nota Tempo',
+                                  constraints: const BoxConstraints.tightFor(
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  visualDensity: VisualDensity.compact,
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.08),
+                                        shape: BoxShape.circle),
+                                    child: const Icon(
+                                        Icons.receipt_long_rounded,
+                                        color: Color(0xFF60A5FA),
+                                        size: 17),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const NotaTempoPage()),
+                                    );
+                                  },
                                 ),
-                                const SizedBox(width: 8),
-                                const Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Monitoring & Selling',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w800,
-                                          letterSpacing: -0.3,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Realtime Operations Dashboard',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Color(0xFF94A3B8),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
+                                IconButton(
+                                  tooltip: 'History Penjualan Semua Toko',
+                                  constraints: const BoxConstraints.tightFor(
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  visualDensity: VisualDensity.compact,
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.08),
+                                        shape: BoxShape.circle),
+                                    child: const Icon(Icons.history_rounded,
+                                        color: Color(0xFF60A5FA), size: 17),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AllSalesHistoryPage()),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  tooltip: 'Admin Panel',
+                                  constraints: const BoxConstraints.tightFor(
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () =>
+                                      Navigator.pushNamed(context, '/admin'),
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.08),
+                                        shape: BoxShape.circle),
+                                    child: const Icon(
+                                        Icons.admin_panel_settings_rounded,
+                                        color: Color(0xFF60A5FA),
+                                        size: 17),
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                tooltip: 'Pencatatan Nota Tempo',
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 40,
-                                  height: 40,
-                                ),
-                                padding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                                icon: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.receipt_long_rounded, color: Color(0xFF60A5FA), size: 17),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const NotaTempoPage()),
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                tooltip: 'History Penjualan Semua Toko',
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 40,
-                                  height: 40,
-                                ),
-                                padding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                                icon: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.history_rounded, color: Color(0xFF60A5FA), size: 17),
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const AllSalesHistoryPage()),
-                                  );
-                                },
-                              ),
-                              IconButton(
-                                tooltip: 'Admin Panel',
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 40,
-                                  height: 40,
-                                ),
-                                padding: EdgeInsets.zero,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: () => Navigator.pushNamed(context, '/admin'),
-                                icon: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), shape: BoxShape.circle),
-                                  child: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 17),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08), 
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withOpacity(0.12)),
+                            )
+                          ],
                         ),
-                        child: TextField(
-                          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
-                          onChanged: (value) {
-                            setState(() { _searchQuery = value.trim().toLowerCase(); });
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Cari nama toko secara instan...',
-                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 13), 
-                            prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF60A5FA), size: 18),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Row( 
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF3B82F6).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3))
-                            ),
-                            child: const Icon(Icons.insights_rounded, color: Color(0xFF60A5FA), size: 24),
-                          ),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'DailySale & StokMonitoring', 
-                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: -0.3)
-                              ),
-                              Text(
-                                'Executive Operations & Analytics Dashboard', 
-                                style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w500)
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 380),
-                          margin: const EdgeInsets.symmetric(horizontal: 32),
+                        const SizedBox(height: 12),
+                        Container(
+                          width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08), 
+                            color: Colors.white.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withOpacity(0.12)),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.12)),
                           ),
                           child: TextField(
-                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500),
                             onChanged: (value) {
-                              setState(() { _searchQuery = value.trim().toLowerCase(); });
+                              setState(() {
+                                _searchQuery = value.trim().toLowerCase();
+                              });
                             },
                             decoration: InputDecoration(
                               hintText: 'Cari nama toko secara instan...',
-                              hintStyle: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 13), 
-                              prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF60A5FA), size: 18),
+                              hintStyle: TextStyle(
+                                  color: Colors.white.withOpacity(0.45),
+                                  fontSize: 13),
+                              prefixIcon: const Icon(Icons.search_rounded,
+                                  color: Color(0xFF60A5FA), size: 18),
                               border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 10),
                             ),
                           ),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            tooltip: 'Pencatatan Nota Tempo',
-                            icon: const Icon(Icons.receipt_long_rounded, color: Colors.white70, size: 22),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const NotaTempoPage()),
-                              );
-                            },
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  color:
+                                      const Color(0xFF3B82F6).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: const Color(0xFF3B82F6)
+                                          .withOpacity(0.3))),
+                              child: const Icon(Icons.insights_rounded,
+                                  color: Color(0xFF60A5FA), size: 24),
+                            ),
+                            const SizedBox(width: 14),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text('DailySale & StokMonitoring',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: -0.3)),
+                                Text(
+                                    'Executive Operations & Analytics Dashboard',
+                                    style: TextStyle(
+                                        color: Color(0xFF94A3B8),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 380),
+                            margin: const EdgeInsets.symmetric(horizontal: 32),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.12)),
+                            ),
+                            child: TextField(
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 13),
+                              onChanged: (value) {
+                                setState(() {
+                                  _searchQuery = value.trim().toLowerCase();
+                                });
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Cari nama toko secara instan...',
+                                hintStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.45),
+                                    fontSize: 13),
+                                prefixIcon: const Icon(Icons.search_rounded,
+                                    color: Color(0xFF60A5FA), size: 18),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            tooltip: 'History Penjualan Semua Toko',
-                            icon: const Icon(Icons.history_rounded, color: Colors.white70, size: 22),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const AllSalesHistoryPage()),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            tooltip: 'Admin Panel',
-                            onPressed: () => Navigator.pushNamed(context, '/admin'),
-                            icon: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFF60A5FA), size: 22),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              tooltip: 'Pencatatan Nota Tempo',
+                              icon: const Icon(Icons.receipt_long_rounded,
+                                  color: Colors.white70, size: 22),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NotaTempoPage()),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              tooltip: 'History Penjualan Semua Toko',
+                              icon: const Icon(Icons.history_rounded,
+                                  color: Colors.white70, size: 22),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AllSalesHistoryPage()),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              tooltip: 'Admin Panel',
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, '/admin'),
+                              icon: const Icon(
+                                  Icons.admin_panel_settings_rounded,
+                                  color: Color(0xFF60A5FA),
+                                  size: 22),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
             ),
           ),
-          
+
           // TAB BAR CLEAN BLUE ACCENT
           Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.03), blurRadius: 8, offset: const Offset(0, 2))
-              ]
-            ),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: const Color(0xFF0F172A).withOpacity(0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2))
+            ]),
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Center(
               child: TabBar(
-                controller: _tabController, 
+                controller: _tabController,
                 isScrollable: true,
                 tabAlignment: TabAlignment.center,
                 indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: const Color(0xFF2563EB),
-                  boxShadow: [
-                    BoxShadow(color: const Color(0xFF2563EB).withOpacity(0.25), blurRadius: 6, offset: const Offset(0, 2))
-                  ]
-                ),
+                    borderRadius: BorderRadius.circular(30),
+                    color: const Color(0xFF2563EB),
+                    boxShadow: [
+                      BoxShadow(
+                          color: const Color(0xFF2563EB).withOpacity(0.25),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2))
+                    ]),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
                 unselectedLabelColor: const Color(0xFF64748B),
-                labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12), // BOLD NAMA SALES DI TAB
-                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                labelStyle: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12), // BOLD NAMA SALES DI TAB
+                unselectedLabelStyle:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
                 dividerColor: Colors.transparent,
-                tabs: salesCategories.map((tab) => Tab(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(tab['icon'] as IconData, size: 15), 
-                        const SizedBox(width: 6), 
-                        Text(tab['name'] as String)
-                      ],
-                    ),
-                  ),
-                )).toList(),
+                tabs: salesCategories
+                    .map((tab) => Tab(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 4),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(tab['icon'] as IconData, size: 15),
+                                const SizedBox(width: 6),
+                                Text(tab['name'] as String)
+                              ],
+                            ),
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ),
-          
+
           Expanded(
             child: TabBarView(
-              controller: _tabController, 
+              controller: _tabController,
               children: salesCategories.map((tab) {
                 return SalesDeliveryPipeline(
-                  salesName: tab['name'] as String, 
+                  salesName: tab['name'] as String,
                   query: _searchQuery,
                   headerWidget: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: isMobile ? 16.0 : 24.0, top: 16.0, bottom: 8.0),
+                        padding: EdgeInsets.only(
+                            left: isMobile ? 16.0 : 24.0,
+                            top: 16.0,
+                            bottom: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -655,43 +764,66 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
                               children: [
                                 Container(
                                   padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(color: const Color(0xFF2563EB).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                                  child: const Icon(Icons.inventory_2_rounded, size: 16, color: Color(0xFF2563EB)),
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xFF2563EB)
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: const Icon(Icons.inventory_2_rounded,
+                                      size: 16, color: Color(0xFF2563EB)),
                                 ),
                                 const SizedBox(width: 8),
-                                const Text('Sisa Stok Gudang Pusat', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), letterSpacing: -0.3)),
+                                const Text('Sisa Stok Gudang Pusat',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF0F172A),
+                                        letterSpacing: -0.3)),
                               ],
                             ),
                             const SizedBox(height: 2),
-                            Text(_getFormattedDate(), style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontWeight: FontWeight.w500)),
+                            Text(_getFormattedDate(),
+                                style: const TextStyle(
+                                    color: Color(0xFF64748B),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500)),
                           ],
                         ),
                       ),
-                      
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 24.0),
-                        child: isMobile 
-                          ? Column(
-                              children: [
-                                _buildStockGrid(context),
-                                const SizedBox(height: 12),
-                                _buildEnhancedDynamicSalesTarget(context, isMobile),
-                              ],
-                            )
-                          : Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(width: screenWidth * 0.54, child: _buildStockGrid(context)),
-                                SizedBox(width: screenWidth * 0.40, child: _buildEnhancedDynamicSalesTarget(context, isMobile)),
-                              ],
-                            ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 16.0 : 24.0),
+                        child: isMobile
+                            ? Column(
+                                children: [
+                                  _buildStockGrid(context),
+                                  const SizedBox(height: 12),
+                                  _buildEnhancedDynamicSalesTarget(
+                                      context, isMobile),
+                                ],
+                              )
+                            : Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                      width: screenWidth * 0.54,
+                                      child: _buildStockGrid(context)),
+                                  SizedBox(
+                                      width: screenWidth * 0.40,
+                                      child: _buildEnhancedDynamicSalesTarget(
+                                          context, isMobile)),
+                                ],
+                              ),
                       ),
-                      
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 24.0, vertical: 14.0), 
-                        child: const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0))
-                      ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 16.0 : 24.0,
+                              vertical: 14.0),
+                          child: const Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: Color(0xFFE2E8F0))),
                     ],
                   ),
                 );
@@ -710,14 +842,15 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
 
     if (stocks.isEmpty) {
       return Container(
-        height: 105, 
-        decoration: BoxDecoration(
-          color: Colors.white, 
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: const Center(child: Text('No stock data available', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)))
-      );
+          height: 105,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: const Center(
+              child: Text('No stock data available',
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12))));
     }
 
     final List<String> customOrder = [
@@ -757,101 +890,92 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
             bool isLow = item.quantity < 50;
 
             // Skema Warna Dinamis berdasarkan Status (Merah jika LOW, Hijau jika SAFE)
-            final Color accentColor = isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
-            final Color headerBgColor = isLow ? const Color(0xFFFEF2F2) : const Color(0xFFECFDF5);
-            final Color headerTextColor = isLow ? const Color(0xFF991B1B) : const Color(0xFF065F46);
-            final Color badgeBgColor = isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
-            final Color badgeBorderColor = isLow ? const Color(0xFFB91C1C) : const Color(0xFF059669);
+            final Color accentColor =
+                isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
+            final Color headerBgColor =
+                isLow ? const Color(0xFFFEF2F2) : const Color(0xFFECFDF5);
+            final Color headerTextColor =
+                isLow ? const Color(0xFF991B1B) : const Color(0xFF065F46);
+            final Color badgeBgColor =
+                isLow ? const Color(0xFFEF4444) : const Color(0xFF10B981);
+            final Color badgeBorderColor =
+                isLow ? const Color(0xFFB91C1C) : const Color(0xFF059669);
 
             return Container(
               width: 148,
               decoration: BoxDecoration(
-                color: Colors.white, 
-                borderRadius: BorderRadius.circular(16), 
-                boxShadow: [
-                  BoxShadow(
-                    color: accentColor.withOpacity(0.08), 
-                    blurRadius: 10, 
-                    offset: const Offset(0, 3)
-                  )
-                ],
-                // GARIS SAMPING / BORDER IKUT HIJAU BILA SAFE, MERAH BILA LOW
-                border: Border.all(
-                  color: accentColor.withOpacity(0.4), 
-                  width: 1.5
-                )
-              ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                        color: accentColor.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3))
+                  ],
+                  // GARIS SAMPING / BORDER IKUT HIJAU BILA SAFE, MERAH BILA LOW
+                  border: Border.all(
+                      color: accentColor.withOpacity(0.4), width: 1.5)),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
                 child: Column(
                   children: [
                     // TOP BAR HEADER
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      color: headerBgColor, 
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      color: headerBgColor,
                       child: Row(
                         children: [
                           Expanded(
-                            child: Text(
-                              item.name, 
-                              style: TextStyle(
-                                color: headerTextColor, 
-                                fontSize: 10, 
-                                fontWeight: FontWeight.w800
-                              ), 
-                              maxLines: 1, 
-                              overflow: TextOverflow.ellipsis
-                            ),
+                            child: Text(item.name,
+                                style: TextStyle(
+                                    color: headerTextColor,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: badgeBgColor, 
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: badgeBorderColor, 
-                                width: 0.8
-                              )
-                            ),
-                            child: Text(
-                              isLow ? 'LOW' : 'SAFE', 
-                              style: const TextStyle(
-                                color: Colors.white, 
-                                fontSize: 8, 
-                                fontWeight: FontWeight.w900
-                              )
-                            ),
+                                color: badgeBgColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    color: badgeBorderColor, width: 0.8)),
+                            child: Text(isLow ? 'LOW' : 'SAFE',
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900)),
                           )
                         ],
                       ),
                     ),
-                    
+
                     // BODY QUANTITY
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.baseline,
                           textBaseline: TextBaseline.alphabetic,
                           children: [
-                            Text(
-                              '${item.quantity}', 
-                              style: TextStyle(
-                                color: isLow ? const Color(0xFF991B1B) : const Color(0xFF0F172A), 
-                                fontSize: 22, 
-                                fontWeight: FontWeight.w900, 
-                                letterSpacing: -0.5
-                              )
-                            ),
+                            Text('${item.quantity}',
+                                style: TextStyle(
+                                    color: isLow
+                                        ? const Color(0xFF991B1B)
+                                        : const Color(0xFF0F172A),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.5)),
                             const SizedBox(width: 4),
-                            Text(
-                              item.unit, 
-                              style: TextStyle(
-                                color: accentColor, 
-                                fontSize: 10, 
-                                fontWeight: FontWeight.w700
-                              )
-                            ),
+                            Text(item.unit,
+                                style: TextStyle(
+                                    color: accentColor,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700)),
                           ],
                         ),
                       ),
@@ -865,176 +989,240 @@ class _AudienceHomeScreenState extends State<AudienceHomeScreen> with SingleTick
       ),
     );
   }
-                    
+
   Widget _buildEnhancedDynamicSalesTarget(BuildContext context, bool isMobile) {
     final provider = Provider.of<AdminProvider>(context);
     final String upperName = _currentTabSalesName.trim().toUpperCase();
-    
+
     final int target = provider.salesTargets[upperName] ?? 0;
     final int achieved = provider.getSalesMonthlyAchieved(upperName);
     final bool isNonTarget = upperName == 'INSTANSI' || upperName == 'SHOPEE';
-    
+
     double persen = target > 0 ? (achieved / target) : 0.0;
     if (persen > 1.0) persen = 1.0;
 
     String bulanSekarang = DateFormat('MMMM yyyy', 'id').format(DateTime.now());
-    final String initial = upperName.length >= 2 ? upperName.substring(0, 2).toUpperCase() : upperName.toUpperCase();
+    final String initial = upperName.length >= 2
+        ? upperName.substring(0, 2).toUpperCase()
+        : upperName.toUpperCase();
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: provider.streamSalesProfile(upperName),
-      builder: (context, snapshot) {
-        String? avatarBase64;
-        if (snapshot.hasData && snapshot.data!.exists) {
-          final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
-          avatarBase64 = data['avatarBase64']?.toString();
-        }
+        stream: provider.streamSalesProfile(upperName),
+        builder: (context, snapshot) {
+          String? avatarBase64;
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+            avatarBase64 = data['avatarBase64']?.toString();
+          }
 
-        Uint8List? decodedBytes;
-        if (avatarBase64 != null && avatarBase64.isNotEmpty) {
-          try {
-            decodedBytes = base64Decode(avatarBase64);
-          } catch (_) {}
-        }
+          Uint8List? decodedBytes;
+          if (avatarBase64 != null && avatarBase64.isNotEmpty) {
+            try {
+              decodedBytes = base64Decode(avatarBase64);
+            } catch (_) {}
+          }
 
-        return Container(
-          height: 97,
-          decoration: BoxDecoration(
-            color: Colors.white, 
-            borderRadius: BorderRadius.circular(16), 
-            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
-            boxShadow: [
-              BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2))
-            ],
-          ),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () => _showWAProfilePreviewDialog(context, _currentTabSalesName, avatarBase64), 
-                child: Tooltip(
-                  message: 'Lihat / Ubah Foto Profil',
-                  child: Container(
-                    width: isMobile ? 100 : 115, 
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2563EB).withOpacity(0.04),
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(14), bottomLeft: Radius.circular(14)),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Builder(
-                          builder: (context) {
-                            if (upperName == 'INSTANSI') {
-                              return const CircleAvatar(radius: 18, backgroundColor: Color(0xFFEFF6FF), child: Icon(Icons.business_rounded, color: Color(0xFF2563EB), size: 18));
-                            } else if (upperName == 'SHOPEE') {
-                              return const CircleAvatar(radius: 18, backgroundColor: Color(0xFFFFF7ED), child: Icon(Icons.shopping_bag_rounded, color: Colors.orange, size: 18));
-                            } else {
-                              return Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFFE2E8F0),
-                                  border: Border.all(color: Colors.white, width: 2),
-                                ),
-                                child: ClipOval(
-                                  child: decodedBytes != null
-                                      ? Image.memory(
-                                          decodedBytes,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Center(
-                                          child: Text(initial, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF1E40AF))),
-                                        ),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          upperName, 
-                          maxLines: 1, 
-                          overflow: TextOverflow.ellipsis, 
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)) // BOLD NAMA SALES
-                        ), 
-                        Text(bulanSekarang, style: const TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w500)), 
-                      ],
+          return Container(
+            height: 97,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
+              boxShadow: [
+                BoxShadow(
+                    color: const Color(0xFF0F172A).withOpacity(0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2))
+              ],
+            ),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => _showWAProfilePreviewDialog(
+                      context, _currentTabSalesName, avatarBase64),
+                  child: Tooltip(
+                    message: 'Lihat / Ubah Foto Profil',
+                    child: Container(
+                      width: isMobile ? 100 : 115,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2563EB).withOpacity(0.04),
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(14),
+                            bottomLeft: Radius.circular(14)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              if (upperName == 'INSTANSI') {
+                                return const CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: Color(0xFFEFF6FF),
+                                    child: Icon(Icons.business_rounded,
+                                        color: Color(0xFF2563EB), size: 18));
+                              } else if (upperName == 'SHOPEE') {
+                                return const CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: Color(0xFFFFF7ED),
+                                    child: Icon(Icons.shopping_bag_rounded,
+                                        color: Colors.orange, size: 18));
+                              } else {
+                                return Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFFE2E8F0),
+                                    border: Border.all(
+                                        color: Colors.white, width: 2),
+                                  ),
+                                  child: ClipOval(
+                                    child: decodedBytes != null
+                                        ? Image.memory(
+                                            decodedBytes,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Center(
+                                            child: Text(initial,
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Color(0xFF1E40AF))),
+                                          ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 4),
+                          Text(upperName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(0xFF0F172A)) // BOLD NAMA SALES
+                              ),
+                          Text(bulanSekarang,
+                              style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Color(0xFF64748B),
+                                  fontWeight: FontWeight.w500)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              
-              Container(width: 1, height: 50, color: const Color(0xFFE2E8F0)),
-
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
-                  child: isNonTarget 
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('TOTAL PENJUALAN', style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w700, letterSpacing: 0.5)),
-                        const SizedBox(height: 2),
-                        Text('$achieved Karton', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: Color(0xFF2563EB), letterSpacing: -0.5)),
-                        const SizedBox(height: 2),
-                        const Text('Periode berjalan bulan ini', style: TextStyle(fontSize: 9, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500)),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Navigator.canPop(context) ? const SizedBox.shrink() : const SizedBox.shrink(), 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
-                          children: [
-                            const Text('CAPAIAN TARGET', style: TextStyle(fontSize: 9, color: Color(0xFF64748B), fontWeight: FontWeight.w700, letterSpacing: 0.5)),
-                            Text('${(persen * 100).toStringAsFixed(1)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: persen >= 1.0 ? const Color(0xFF10B981) : const Color(0xFFD97706))),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Text('$achieved / $target Krt', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF0F172A))),
-                        const SizedBox(height: 6),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: LinearProgressIndicator(
-                            value: persen, 
-                            minHeight: 6, 
-                            backgroundColor: const Color(0xFFF1F5F9),
-                            valueColor: AlwaysStoppedAnimation<Color>(persen >= 1.0 ? const Color(0xFF10B981) : const Color(0xFFF59E0B)),
+                Container(width: 1, height: 50, color: const Color(0xFFE2E8F0)),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14.0, vertical: 10.0),
+                    child: isNonTarget
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('TOTAL PENJUALAN',
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      color: Color(0xFF64748B),
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5)),
+                              const SizedBox(height: 2),
+                              Text('$achieved Karton',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 17,
+                                      color: Color(0xFF2563EB),
+                                      letterSpacing: -0.5)),
+                              const SizedBox(height: 2),
+                              const Text('Periode berjalan bulan ini',
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      color: Color(0xFF94A3B8),
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Navigator.canPop(context)
+                                  ? const SizedBox.shrink()
+                                  : const SizedBox.shrink(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  const Text('CAPAIAN TARGET',
+                                      style: TextStyle(
+                                          fontSize: 9,
+                                          color: Color(0xFF64748B),
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.5)),
+                                  Text('${(persen * 100).toStringAsFixed(1)}%',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w800,
+                                          color: persen >= 1.0
+                                              ? const Color(0xFF10B981)
+                                              : const Color(0xFFD97706))),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text('$achieved / $target Krt',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 13,
+                                      color: Color(0xFF0F172A))),
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: LinearProgressIndicator(
+                                  value: persen,
+                                  minHeight: 6,
+                                  backgroundColor: const Color(0xFFF1F5F9),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      persen >= 1.0
+                                          ? const Color(0xFF10B981)
+                                          : const Color(0xFFF59E0B)),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
+              ],
+            ),
+          );
+        });
   }
 }
 
 class SalesDeliveryPipeline extends StatelessWidget {
   final String salesName;
   final String query;
-  final Widget headerWidget; 
-  
+  final Widget headerWidget;
+
   const SalesDeliveryPipeline({
-    super.key, 
-    required this.salesName, 
+    super.key,
+    required this.salesName,
     required this.query,
     required this.headerWidget,
   });
 
   Widget _buildMuatanDetails(List<dynamic>? muatan) {
     if (muatan == null || muatan.isEmpty) {
-      return const Text('Muatan: Kosong', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.w500));
+      return const Text('Muatan: Kosong',
+          style: TextStyle(
+              color: Color(0xFF94A3B8),
+              fontSize: 11,
+              fontWeight: FontWeight.w500));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1047,18 +1235,29 @@ class SalesDeliveryPipeline extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFFE2E8F0))
-            ),
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: const Color(0xFFE2E8F0))),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('$qty $unit', style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFFD97706), fontSize: 11)),
+                Text('$qty $unit',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFFD97706),
+                        fontSize: 11)),
                 const SizedBox(width: 6),
-                const Text('|', style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 11)),
+                const Text('|',
+                    style: TextStyle(color: Color(0xFFCBD5E1), fontSize: 11)),
                 const SizedBox(width: 6),
-                Flexible(child: Text(name, style: const TextStyle(color: Color(0xFF334155), fontSize: 11, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                Flexible(
+                    child: Text(name,
+                        style: const TextStyle(
+                            color: Color(0xFF334155),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis)),
               ],
             ),
           ),
@@ -1071,7 +1270,9 @@ class SalesDeliveryPipeline extends StatelessWidget {
     int total = 0;
     for (var store in stores) {
       for (var item in store.muatan) {
-        final int qty = (item['qty'] is int) ? item['qty'] as int : int.tryParse('${item['qty']}') ?? 0;
+        final int qty = (item['qty'] is int)
+            ? item['qty'] as int
+            : int.tryParse('${item['qty']}') ?? 0;
         total += qty;
       }
     }
@@ -1092,10 +1293,13 @@ class SalesDeliveryPipeline extends StatelessWidget {
 
         final listMasterToko = snapshot.data ?? [];
         var storeList = List<Store>.from(listMasterToko);
-        storeList = storeList.where((store) => store.muatan.isNotEmpty).toList();
+        storeList =
+            storeList.where((store) => store.muatan.isNotEmpty).toList();
 
         if (query.isNotEmpty) {
-          storeList = storeList.where((store) => store.name.toLowerCase().contains(query)).toList();
+          storeList = storeList
+              .where((store) => store.name.toLowerCase().contains(query))
+              .toList();
         }
 
         final activeStores = storeList.where((s) {
@@ -1116,24 +1320,34 @@ class SalesDeliveryPipeline extends StatelessWidget {
           Widget agingWidget = const SizedBox.shrink();
 
           if (store.createdAt != null) {
-            tanggalInfo = DateFormat('d MMM yyyy HH:mm', 'id').format(store.createdAt!);
+            tanggalInfo =
+                DateFormat('d MMM yyyy HH:mm', 'id').format(store.createdAt!);
             final tanggalHariIni = DateTime.now();
-            final hanyaTanggalOrder = DateTime(store.createdAt!.year, store.createdAt!.month, store.createdAt!.day);
-            final hanyaTanggalHariIni = DateTime(tanggalHariIni.year, tanggalHariIni.month, tanggalHariIni.day);
-            final selisihHari = hanyaTanggalHariIni.difference(hanyaTanggalOrder).inDays;
+            final hanyaTanggalOrder = DateTime(store.createdAt!.year,
+                store.createdAt!.month, store.createdAt!.day);
+            final hanyaTanggalHariIni = DateTime(
+                tanggalHariIni.year, tanggalHariIni.month, tanggalHariIni.day);
+            final selisihHari =
+                hanyaTanggalHariIni.difference(hanyaTanggalOrder).inDays;
 
             if (selisihHari >= 3) {
               agingWidget = Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(color: const Color(0xFFFEE2E2), borderRadius: BorderRadius.circular(4)),
-                child: Text('⚠️ PENDING $selisihHari HARI', style: const TextStyle(color: Color(0xFFDC2626), fontSize: 9, fontWeight: FontWeight.w700)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFFEE2E2),
+                    borderRadius: BorderRadius.circular(4)),
+                child: Text('⚠️ PENDING $selisihHari HARI',
+                    style: const TextStyle(
+                        color: Color(0xFFDC2626),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700)),
               );
             }
           }
 
           return DeliveryCard(
-            shopName: store.name, 
-            address: store.address, 
+            shopName: store.name,
+            address: store.address,
             details: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1148,37 +1362,43 @@ class SalesDeliveryPipeline extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.access_time_rounded, size: 12, color: Color(0xFF94A3B8)),
+                        const Icon(Icons.access_time_rounded,
+                            size: 12, color: Color(0xFF94A3B8)),
                         const SizedBox(width: 4),
-                        Text('Tgl Dimuat: $tanggalInfo', style: const TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.w500)),
+                        Text('Tgl Dimuat: $tanggalInfo',
+                            style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500)),
                       ],
                     ),
                     agingWidget,
                   ],
                 ),
               ],
-            ), 
-            status: store.status.toUpperCase(), 
+            ),
+            status: store.status.toUpperCase(),
           );
         }).toList();
 
         final finalCards = finalStores.map((store) {
           String tanggalInfo = "-";
           if (store.createdAt != null) {
-            tanggalInfo = DateFormat('d MMM yyyy HH:mm', 'id').format(store.createdAt!);
+            tanggalInfo =
+                DateFormat('d MMM yyyy HH:mm', 'id').format(store.createdAt!);
           }
 
           return DeliveryCard(
-            shopName: store.name, 
-            address: store.address, 
+            shopName: store.name,
+            address: store.address,
             details: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildMuatanDetails(store.muatan),
                 const SizedBox(height: 6),
               ],
-            ), 
-            status: store.status.toUpperCase(), 
+            ),
+            status: store.status.toUpperCase(),
           );
         }).toList();
 
@@ -1186,38 +1406,67 @@ class SalesDeliveryPipeline extends StatelessWidget {
           children: [
             Positioned.fill(
               child: Padding(
-                padding: EdgeInsets.only(bottom: isMobile ? 70.0 : 0.0), 
+                padding: EdgeInsets.only(bottom: isMobile ? 70.0 : 0.0),
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      headerWidget, 
-                      
+                      headerWidget,
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 12.0 : 24.0),
-                        child: isMobile 
-                          ? Column(
-                              children: [
-                                ExpandableDeliveryColumn(title: 'ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards),
-                                const SizedBox(height: 16),
-                                ExpandableDeliveryColumn(title: 'RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards),
-                              ],
-                            )
-                          : Column( 
-                              children: [
-                                Row( 
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(child: ExpandableDeliveryColumn(title: 'ANTRIAN AKTIF', subtitle: '(${activeCards.length} Toko)', headerColor: const Color(0xFFB45309), bgColor: const Color(0xFFFFFBEB), items: activeCards)),
-                                    const SizedBox(width: 16),
-                                    Expanded(child: ExpandableDeliveryColumn(title: 'RUTE SELESAI', subtitle: '(${finalCards.length} Toko)', headerColor: const Color(0xFF047857), bgColor: const Color(0xFFF0FDF4), items: finalCards)),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-                                _buildTotalsCard(pendingCount: totalPendingKarton, deliveredCount: totalDeliveredKarton),
-                              ],
-                            ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 12.0 : 24.0),
+                        child: isMobile
+                            ? Column(
+                                children: [
+                                  ExpandableDeliveryColumn(
+                                      title: 'ANTRIAN AKTIF',
+                                      subtitle: '(${activeCards.length} Toko)',
+                                      headerColor: const Color(0xFFB45309),
+                                      bgColor: const Color(0xFFFFFBEB),
+                                      items: activeCards),
+                                  const SizedBox(height: 16),
+                                  ExpandableDeliveryColumn(
+                                      title: 'RUTE SELESAI',
+                                      subtitle: '(${finalCards.length} Toko)',
+                                      headerColor: const Color(0xFF047857),
+                                      bgColor: const Color(0xFFF0FDF4),
+                                      items: finalCards),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          child: ExpandableDeliveryColumn(
+                                              title: 'ANTRIAN AKTIF',
+                                              subtitle:
+                                                  '(${activeCards.length} Toko)',
+                                              headerColor:
+                                                  const Color(0xFFB45309),
+                                              bgColor: const Color(0xFFFFFBEB),
+                                              items: activeCards)),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                          child: ExpandableDeliveryColumn(
+                                              title: 'RUTE SELESAI',
+                                              subtitle:
+                                                  '(${finalCards.length} Toko)',
+                                              headerColor:
+                                                  const Color(0xFF047857),
+                                              bgColor: const Color(0xFFF0FDF4),
+                                              items: finalCards)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTotalsCard(
+                                      pendingCount: totalPendingKarton,
+                                      deliveredCount: totalDeliveredKarton),
+                                ],
+                              ),
                       ),
                       const SizedBox(height: 32),
                     ],
@@ -1225,7 +1474,6 @@ class SalesDeliveryPipeline extends StatelessWidget {
                 ),
               ),
             ),
-            
             if (isMobile)
               Positioned(
                 left: 12,
@@ -1242,7 +1490,9 @@ class SalesDeliveryPipeline extends StatelessWidget {
                       )
                     ],
                   ),
-                  child: _buildTotalsCard(pendingCount: totalPendingKarton, deliveredCount: totalDeliveredKarton),
+                  child: _buildTotalsCard(
+                      pendingCount: totalPendingKarton,
+                      deliveredCount: totalDeliveredKarton),
                 ),
               ),
           ],
@@ -1251,58 +1501,75 @@ class SalesDeliveryPipeline extends StatelessWidget {
     );
   }
 
-  Widget _buildTotalsCard({required int pendingCount, required int deliveredCount}) {
+  Widget _buildTotalsCard(
+      {required int pendingCount, required int deliveredCount}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white, 
-        borderRadius: BorderRadius.circular(16), 
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0), width: 1.2),
       ),
       child: Row(
         children: [
           Expanded(
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: const Color(0xFFFEF3C7), borderRadius: BorderRadius.circular(10)),
-                  child: const Icon(Icons.pending_actions_rounded, color: Color(0xFFD97706), size: 18),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
-                  children: [
-                    const Text('Total Antrian', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w700)), 
-                    const SizedBox(height: 1), 
-                    Text('$pendingCount Krt', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFFD97706), letterSpacing: -0.3))
-                  ]
-                ),
-              ],
-            )
-          ),
+              child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFFEF3C7),
+                    borderRadius: BorderRadius.circular(10)),
+                child: const Icon(Icons.pending_actions_rounded,
+                    color: Color(0xFFD97706), size: 18),
+              ),
+              const SizedBox(width: 10),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Total Antrian',
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 1),
+                Text('$pendingCount Krt',
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFFD97706),
+                        letterSpacing: -0.3))
+              ]),
+            ],
+          )),
           Container(width: 1, height: 32, color: const Color(0xFFE2E8F0)),
           const SizedBox(width: 10),
           Expanded(
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: const Color(0xFFD1FAE5), borderRadius: BorderRadius.circular(10)),
-                  child: const Icon(Icons.check_circle_rounded, color: Color(0xFF059669), size: 18),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, 
-                  children: [
-                    const Text('Total Terkirim', style: TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w700)), 
-                    const SizedBox(height: 1), 
-                    Text('$deliveredCount Krt', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF059669), letterSpacing: -0.3))
-                  ]
-                ),
-              ],
-            )
-          ),
+              child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFD1FAE5),
+                    borderRadius: BorderRadius.circular(10)),
+                child: const Icon(Icons.check_circle_rounded,
+                    color: Color(0xFF059669), size: 18),
+              ),
+              const SizedBox(width: 10),
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Total Terkirim',
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(height: 1),
+                Text('$deliveredCount Krt',
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF059669),
+                        letterSpacing: -0.3))
+              ]),
+            ],
+          )),
         ],
       ),
     );
@@ -1326,19 +1593,21 @@ class ExpandableDeliveryColumn extends StatefulWidget {
   });
 
   @override
-  State<ExpandableDeliveryColumn> createState() => _ExpandableDeliveryColumnState();
+  State<ExpandableDeliveryColumn> createState() =>
+      _ExpandableDeliveryColumnState();
 }
 
 class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
-  bool _isExpanded = true; 
+  bool _isExpanded = true;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.bgColor, 
-        borderRadius: BorderRadius.circular(16), 
-        border: Border.all(color: widget.headerColor.withOpacity(0.2), width: 1.2),
+        color: widget.bgColor,
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: widget.headerColor.withOpacity(0.2), width: 1.2),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
@@ -1355,42 +1624,61 @@ class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
           },
           title: Row(
             children: [
-              Container(width: 3.5, height: 16, decoration: BoxDecoration(color: widget.headerColor, borderRadius: BorderRadius.circular(2))),
+              Container(
+                  width: 3.5,
+                  height: 16,
+                  decoration: BoxDecoration(
+                      color: widget.headerColor,
+                      borderRadius: BorderRadius.circular(2))),
               const SizedBox(width: 8),
               Text(
-                widget.title, 
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: widget.headerColor, letterSpacing: 0.2),
+                widget.title,
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: widget.headerColor,
+                    letterSpacing: 0.2),
               ),
               const SizedBox(width: 6),
               Text(
                 widget.subtitle,
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: widget.headerColor.withOpacity(0.8)),
+                style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: widget.headerColor.withOpacity(0.8)),
               )
             ],
           ),
           trailing: Icon(
-            _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+            _isExpanded
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
             color: widget.headerColor,
             size: 20,
           ),
-          childrenPadding: const EdgeInsets.only(left: 12, right: 12, bottom: 14),
+          childrenPadding:
+              const EdgeInsets.only(left: 12, right: 12, bottom: 14),
           expandedAlignment: Alignment.topLeft,
           children: [
             widget.items.isEmpty
                 ? Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 28), 
+                      padding: const EdgeInsets.symmetric(vertical: 28),
                       child: Text(
-                        'Tidak ada rute pipeline', 
-                        style: TextStyle(color: widget.headerColor.withOpacity(0.5), fontSize: 12, fontWeight: FontWeight.w600),
+                        'Tidak ada rute pipeline',
+                        style: TextStyle(
+                            color: widget.headerColor.withOpacity(0.5),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   )
                 : ListView.separated(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(), 
-                    itemCount: widget.items.length, 
-                    separatorBuilder: (_, __) => const SizedBox(height: 8), 
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemCount: widget.items.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 8),
                     itemBuilder: (ctx, idx) => widget.items[idx],
                   ),
           ],
@@ -1401,19 +1689,18 @@ class _ExpandableDeliveryColumnState extends State<ExpandableDeliveryColumn> {
 }
 
 class DeliveryCard extends StatelessWidget {
-  final String shopName; 
-  final String address; 
-  final Widget details; 
-  final String status; 
+  final String shopName;
+  final String address;
+  final Widget details;
+  final String status;
 
-  const DeliveryCard({
-    super.key, 
-    required this.shopName, 
-    required this.address, 
-    required this.details, 
-    required this.status
-  });
-  
+  const DeliveryCard(
+      {super.key,
+      required this.shopName,
+      required this.address,
+      required this.details,
+      required this.status});
+
   @override
   Widget build(BuildContext context) {
     Color badgeBgColor = const Color(0xFFFEF3C7);
@@ -1459,62 +1746,67 @@ class DeliveryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white, 
-        borderRadius: BorderRadius.circular(12), 
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
-        boxShadow: [
-          BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.015), blurRadius: 6, offset: const Offset(0, 2))
-        ]
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
+          boxShadow: [
+            BoxShadow(
+                color: const Color(0xFF0F172A).withOpacity(0.015),
+                blurRadius: 6,
+                offset: const Offset(0, 2))
+          ]),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start, 
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  shopName, 
-                  style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF0F172A), letterSpacing: -0.2), // BOLD NAMA TOKO
-                  maxLines: 1, 
-                  overflow: TextOverflow.ellipsis
-                ),
+                Text(shopName,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        color: Color(0xFF0F172A),
+                        letterSpacing: -0.2), // BOLD NAMA TOKO
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
                 if (address.isNotEmpty) ...[
                   const SizedBox(height: 3),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_rounded, size: 12, color: Color(0xFF94A3B8)),
+                      const Icon(Icons.location_on_rounded,
+                          size: 12, color: Color(0xFF94A3B8)),
                       const SizedBox(width: 3),
                       Expanded(
-                        child: Text(
-                          address, 
-                          style: const TextStyle(fontSize: 10, color: Color(0xFF64748B), fontWeight: FontWeight.w500), 
-                          maxLines: 1, 
-                          overflow: TextOverflow.ellipsis
-                        )
-                      ),
+                          child: Text(address,
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xFF64748B),
+                                  fontWeight: FontWeight.w500),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis)),
                     ],
                   ),
                 ],
-                const SizedBox(height: 4), 
+                const SizedBox(height: 4),
                 details,
               ],
             ),
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), 
-            decoration: BoxDecoration(
-              color: badgeBgColor, 
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: badgeBorderColor, width: 1)
-            ), 
-            child: Text(
-              labelText, 
-              style: TextStyle(color: badgeTextColor, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 0.3)
-            )
-          ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                  color: badgeBgColor,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: badgeBorderColor, width: 1)),
+              child: Text(labelText,
+                  style: TextStyle(
+                      color: badgeTextColor,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3))),
         ],
       ),
     );
