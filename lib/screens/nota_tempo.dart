@@ -720,10 +720,12 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                                           Text(
                                             data['customerName']?.toString() ??
                                                 '-',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 14,
-                                              color: Color(0xFF0F172A),
+                                            style: TextStyle(
+                                              fontWeight: isMobile
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w900,
+                                              fontSize: isMobile ? 13 : 14,
+                                              color: const Color(0xFF0F172A),
                                             ),
                                           ),
                                           const SizedBox(height: 3),
@@ -741,8 +743,10 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                                               color: paid
                                                   ? const Color(0xFF059669)
                                                   : const Color(0xFF0F172A),
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 15,
+                                              fontWeight: isMobile
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w900,
+                                              fontSize: isMobile ? 13 : 15,
                                             ),
                                           ),
                                           const SizedBox(height: 4),
