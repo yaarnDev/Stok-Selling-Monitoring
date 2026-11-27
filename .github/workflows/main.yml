@@ -1,0 +1,37 @@
+name: Build APK Kilat
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      # 🛠️ AMAN KUNCI DI SINI: Kita paksa pakai Flutter v3.19.6 (Versi stabil sebelum aturan baru berlaku)
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6' 
+          channel: 'stable'
+
+      - name: Tarik Library Dependensi
+        run: flutter pub get
+
+      - name: Rakit File APK Resmi
+        run: flutter build apk --split-per-abi
+
+      - name: Upload APK Jadi Ke Browser
+        uses: actions/upload-artifact@v4
+        with:
+          name: aplikasi-sales-sukses
+          path: build/app/outputs/flutter-apk/*.apk
