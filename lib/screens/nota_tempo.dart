@@ -496,87 +496,58 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
             }
           }
 
+          final screenWidth = MediaQuery.of(context).size.width;
+          final horizontalPadding = isMobile ? 24.0 : 48.0;
+          final halfCardWidth = (screenWidth - horizontalPadding - 10) / 2;
+
           return Padding(
             padding: EdgeInsets.all(isMobile ? 12 : 24),
             child: Column(
               children: [
-                isMobile
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: isMobile ? 92 : 105,
+                      child: _summaryCard(
+                        'Piutang Aktif',
+                        '$outstandingCount nota',
+                        currency.format(outstandingAmount),
+                        const Color(0xFFD97706),
+                        Icons.pending_actions_rounded,
+                        mobile: isMobile,
+                        width: screenWidth - horizontalPadding,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: isMobile ? 92 : 105,
+                      child: Row(
                         children: [
-                          SizedBox(
-                            height: 92,
-                            child: _summaryCard(
-                              'Piutang Aktif',
-                              '$outstandingCount nota',
-                              currency.format(outstandingAmount),
-                              const Color(0xFFD97706),
-                              Icons.pending_actions_rounded,
-                              mobile: true,
-                              width: MediaQuery.of(context).size.width - 24,
-                            ),
+                          _summaryCard(
+                            'Jatuh Tempo',
+                            '$overdueCount nota',
+                            'Perlu ditindaklanjuti',
+                            const Color(0xFFDC2626),
+                            Icons.warning_amber_rounded,
+                            mobile: isMobile,
+                            width: halfCardWidth,
                           ),
-                          const SizedBox(height: 10),
-                          SizedBox(
-                            height: 92,
-                            child: Row(
-                              children: [
-                                _summaryCard(
-                                  'Jatuh Tempo',
-                                  '$overdueCount nota',
-                                  'Perlu ditindaklanjuti',
-                                  const Color(0xFFDC2626),
-                                  Icons.warning_amber_rounded,
-                                  mobile: true,
-                                ),
-                                const SizedBox(width: 10),
-                                _summaryCard(
-                                  'Sudah Lunas',
-                                  '$paidCount nota',
-                                  currency.format(totalPaidAmount),
-                                  const Color(0xFF059669),
-                                  Icons.check_circle_outline_rounded,
-                                  mobile: true,
-                                ),
-                              ],
-                            ),
+                          const SizedBox(width: 10),
+                          _summaryCard(
+                            'Sudah Lunas',
+                            '$paidCount nota',
+                            currency.format(totalPaidAmount),
+                            const Color(0xFF059669),
+                            Icons.check_circle_outline_rounded,
+                            mobile: isMobile,
+                            width: halfCardWidth,
                           ),
                         ],
-                      )
-                    : SizedBox(
-                        height: 105,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _summaryCard(
-                              'Piutang Aktif',
-                              '$outstandingCount nota',
-                              currency.format(outstandingAmount),
-                              const Color(0xFFD97706),
-                              Icons.pending_actions_rounded,
-                              mobile: false,
-                            ),
-                            const SizedBox(width: 10),
-                            _summaryCard(
-                              'Jatuh Tempo',
-                              '$overdueCount nota',
-                              'Perlu ditindaklanjuti',
-                              const Color(0xFFDC2626),
-                              Icons.warning_amber_rounded,
-                              mobile: false,
-                            ),
-                            const SizedBox(width: 10),
-                            _summaryCard(
-                              'Sudah Lunas',
-                              '$paidCount nota',
-                              currency.format(totalPaidAmount),
-                              const Color(0xFF059669),
-                              Icons.check_circle_outline_rounded,
-                              mobile: false,
-                            ),
-                          ],
-                        ),
                       ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
