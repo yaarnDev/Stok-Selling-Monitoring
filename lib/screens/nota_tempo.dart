@@ -504,8 +504,6 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _quoteCard(compact: true),
-                          const SizedBox(height: 12),
                           SizedBox(
                             height: 92,
                             child: _summaryCard(
@@ -576,8 +574,6 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
                               Icons.check_circle_outline_rounded,
                               mobile: false,
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(child: _quoteCard(compact: false)),
                           ],
                         ),
                       ),
@@ -904,61 +900,6 @@ class _NotaTempoPageState extends State<NotaTempoPage> {
               fontSize: mobile ? 11 : 9,
               color: const Color(0xFF94A3B8),
               fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _quoteCard({required bool compact}) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: compact ? 12 : 18,
-        vertical: compact ? 10 : 12,
-      ),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F172A).withOpacity(0.10),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: compact ? 32 : 38,
-            height: compact ? 32 : 38,
-            decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withOpacity(0.18),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.format_quote_rounded,
-              color: const Color(0xFF60A5FA),
-              size: compact ? 18 : 22,
-            ),
-          ),
-          SizedBox(width: compact ? 8 : 12),
-          Expanded(
-            child: Text(
-              'Keberanian saat memberikan kepercayaan harus disertai dengan keberanian ketika menuntut tanggung jawab !',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: compact ? 12.5 : 12,
-                height: compact ? 1.4 : 1.45,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.justify,
             ),
           ),
         ],
